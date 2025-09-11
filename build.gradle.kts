@@ -13,5 +13,5 @@ javafx {
 }
 
 application {
-    mainClass = 'com.leevilaune.HelloFX'
+    mainClass = 'fi.group4.Main'
 }

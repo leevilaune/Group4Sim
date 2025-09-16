@@ -18,7 +18,7 @@ import java.util.LinkedList;
  *
  * Service point collects measurement parameters.
  */
-public class ServicePoint {
+public class ServicePoint implements Comparable<ServicePoint>{
 	private LinkedList<Customer> queue = new LinkedList<>(); // Data Structure used
 	private ContinuousGenerator generator;
 	private EventList eventList;
@@ -89,5 +89,10 @@ public class ServicePoint {
 	 */
 	public boolean isOnQueue(){
 		return queue.size() != 0;
+	}
+
+	@Override
+	public int compareTo(ServicePoint o) {
+        return Double.compare(o.queue.peek().getArrivalTime(), this.queue.peek().getArrivalTime());
 	}
 }

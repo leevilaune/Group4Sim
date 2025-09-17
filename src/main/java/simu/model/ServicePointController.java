@@ -46,4 +46,22 @@ public class ServicePointController {
                 });
         return customer[0];
     }
+
+    public boolean isOnQueue() {
+        boolean[] isOnQueue = new boolean[1];
+        Arrays.stream(this.servicePoints)
+                .filter(ServicePoint::isOnQueue)
+                .findFirst()
+                .ifPresent(sp -> {isOnQueue[0]=true;});
+        return isOnQueue[0];
+    }
+
+    public void beginService(){
+        Arrays.stream(this.servicePoints)
+                .filter(ServicePoint::isOnQueue)
+                .sorted()
+                .findFirst()
+                .ifPresent(ServicePoint::beginService);
+    }
 }
+

@@ -69,7 +69,15 @@ public class ServicePoint {
 		Trace.out(Trace.Level.INFO, "Starting a new service for the customer #" + queue.peek().getId());
 		
 		reserved = true;
+
 		double serviceTime = generator.sample();
+        // The average time spent in servicePoint is gotten from here with a simple getter or having some kind
+        // of counter during the run of the program and collects the serviceTimes
+
+        // all servicePoint statistics can be gotten from here by having some if else's based on eventType
+
+        // simplest way to add rollbacks is to add a probability here that chooses the eventType out of the possibilities
+
 		eventList.add(new Event(eventTypeScheduled, Clock.getInstance().getClock()+serviceTime));
 	}
 

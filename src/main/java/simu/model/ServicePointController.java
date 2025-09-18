@@ -2,66 +2,77 @@ package simu.model;
 
 import eduni.distributions.ContinuousGenerator;
 import simu.framework.EventList;
+import simu.framework.Trace;
 
 import java.util.Arrays;
 
 public class ServicePointController {
 
     private ServicePoint[] servicePoints;
-    private ContinuousGenerator generator;
-    private EventList eventList;
-    private EventType type;
 
-    public ServicePointController(int amount, ContinuousGenerator generator, EventList eventList, EventType type){
-        this.servicePoints = new ServicePoint[amount];
-        this.generateServicePoints(amount,generator,eventList,type);
-    }
-    private void generateServicePoints(int amount,ContinuousGenerator generator, EventList eventList, EventType type){
-        for(int i = 0; i<amount;i++){
-            this.servicePoints[i] = new ServicePoint(generator,eventList,type);
+    public ServicePointController(int amount, ContinuousGenerator generator, EventList eventList, EventType type) {
+        servicePoints = new ServicePoint[amount];
+        for (int i = 0; i < amount; i++) {
+            servicePoints[i] = new ServicePoint(generator, eventList, type);
         }
     }
 
-    public void addQueue(Customer a){
-        Arrays.stream(this.servicePoints)
-                .filter(sp -> !sp.isReserved())
-                .findFirst()
-                .ifPresent(sp -> sp.addQueue(a));
+    public void addQueue(Customer customer) {
+        for (ServicePoint sp : servicePoints) {
+            if (!sp.isReserved()) {
+                sp.addQueue(customer);
+                return;
+            }
+        }
+        servicePoints[0].addQueue(customer);
     }
-    public boolean isReserved(){
-        final boolean[] anyIsFree = new boolean[1];
-        Arrays.stream(this.servicePoints)
-                .forEach(sp -> {
-                    if(!sp.isReserved()) anyIsFree[0] = true;
-                });
-        return anyIsFree[0];
+
+    public Customer removeQueue() {
+        for (ServicePoint sp : servicePoints) {
+            if (sp.isOnQueue()) {
+                return sp.removeQueue();
+            }
+        }
+        return null;
     }
-    public Customer removeQueue(){
-        Customer[] customer = new Customer[1];
-        Arrays.stream(this.servicePoints)
-                .filter(ServicePoint::isOnQueue)
-                .sorted()
-                .findFirst()
-                .ifPresent(sp -> {customer[0]=sp.removeQueue();
-                });
-        return customer[0];
+
+    public boolean isReserved() {
+        return Arrays.stream(servicePoints).allMatch(ServicePoint::isReserved);
     }
 
     public boolean isOnQueue() {
-        boolean[] isOnQueue = new boolean[1];
-        Arrays.stream(this.servicePoints)
-                .filter(ServicePoint::isOnQueue)
-                .findFirst()
-                .ifPresent(sp -> {isOnQueue[0]=true;});
-        return isOnQueue[0];
+        return Arrays.stream(servicePoints).anyMatch(ServicePoint::isOnQueue);
     }
 
-    public void beginService(){
-        Arrays.stream(this.servicePoints)
-                .filter(ServicePoint::isOnQueue)
-                .sorted()
-                .findFirst()
-                .ifPresent(ServicePoint::beginService);
+    public void beginService() {
+        for (ServicePoint sp : servicePoints) {
+            if (!sp.isReserved() && sp.isOnQueue()) {
+                sp.beginService();
+                return;
+            }
+        }
+    }
+
+    public void printQueues(){
+        Trace.out(Trace.Level.INFO,"Events in "+this.servicePoints[0].getEventTypeScheduled());
+        Trace.out(Trace.Level.INFO,""+this,"spcontroller.log");
+/*
+        for(ServicePoint sp : this.servicePoints){
+            Trace.out(Trace.Level.INFO,""+this);
+        }
+
+ */
+    }
+
+    public int reservedAmount(){
+        return (int) Arrays.stream(this.servicePoints).filter(ServicePoint::isReserved).count();
+    }
+
+    @Override
+    public String toString() {
+        return "SPController"+this.servicePoints[0].getEventTypeScheduled()+"{" +
+                "reserved=" + this.reservedAmount() +
+                ", points" + Arrays.toString(this.servicePoints) +
+                '}';
     }
 }
-

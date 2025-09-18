@@ -95,4 +95,50 @@ public class ServicePoint implements Comparable<ServicePoint>{
 	public int compareTo(ServicePoint o) {
         return Double.compare(o.queue.peek().getArrivalTime(), this.queue.peek().getArrivalTime());
 	}
+
+	public LinkedList<Customer> getQueue() {
+		return queue;
+	}
+
+	public void setQueue(LinkedList<Customer> queue) {
+		this.queue = queue;
+	}
+
+	public ContinuousGenerator getGenerator() {
+		return generator;
+	}
+
+	public void setGenerator(ContinuousGenerator generator) {
+		this.generator = generator;
+	}
+
+	public EventList getEventList() {
+		return eventList;
+	}
+
+	public void setEventList(EventList eventList) {
+		this.eventList = eventList;
+	}
+
+	public EventType getEventTypeScheduled() {
+		return eventTypeScheduled;
+	}
+
+	public void setEventTypeScheduled(EventType eventTypeScheduled) {
+		this.eventTypeScheduled = eventTypeScheduled;
+	}
+
+	public void setReserved(boolean reserved) {
+		this.reserved = reserved;
+	}
+
+	@Override
+	public String toString() {
+		return "ServicePoint{" +
+				"queue=" + queue +
+				", eventList=" + eventList +
+				", eventTypeScheduled=" + eventTypeScheduled +
+				", reserved=" + reserved +
+				'}';
+	}
 }

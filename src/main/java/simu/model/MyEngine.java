@@ -5,6 +5,8 @@ import eduni.distributions.Normal;
 import eduni.distributions.Uniform;
 import simu.framework.*;
 import eduni.distributions.Negexp;
+
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -91,9 +93,9 @@ public class MyEngine extends Engine {
 				// normal distribution used to model service times
 				serviceTime = new Normal(10, 6, Integer.toUnsignedLong(r.nextInt()));
 
-			servicePoints[0] = new ServicePointController(1,serviceTime, eventList, EventType.DEP1);
-			servicePoints[1] = new ServicePointController(1,serviceTime, eventList, EventType.DEP2);
-			servicePoints[2] = new ServicePointController(1,serviceTime, eventList, EventType.DEP3);
+			servicePoints[0] = new ServicePointController(3,serviceTime, eventList, EventType.DEP1);
+			servicePoints[1] = new ServicePointController(3,serviceTime, eventList, EventType.DEP2);
+			servicePoints[2] = new ServicePointController(3,serviceTime, eventList, EventType.DEP3);
 
 			arrivalProcess = new ArrivalProcess(arrivalTime, eventList, EventType.ARR1);
 		} else {
@@ -141,9 +143,14 @@ public class MyEngine extends Engine {
 
 	@Override
 	protected void tryCEvents() {
+		Trace.out(Trace.Level.INFO, "Checking service points at time " + Clock.getInstance().getClock());
+		Arrays.stream(servicePoints).forEach(ServicePointController::printQueues);
 		for (ServicePointController p: servicePoints){
+			Trace.out(Trace.Level.INFO, "Controller reserved? " + p.isReserved() + ", onQueue? " + p.isOnQueue());
+
 			if (!p.isReserved() && p.isOnQueue()){
 				p.beginService();
+
 			}
 		}
 	}

@@ -6,6 +6,7 @@ import eduni.distributions.Uniform;
 import simu.framework.*;
 import eduni.distributions.Negexp;
 
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -19,7 +20,7 @@ import java.util.Random;
  */
 public class MyEngine extends Engine {
 	private ArrivalProcess arrivalProcess;
-	private ServicePoint[] servicePoints;
+	private ServicePointController[] servicePoints;
 	public static final boolean TEXTDEMO = true;
 	public static final boolean FIXEDARRIVALTIMES = false;
 	public static final boolean FXIEDSERVICETIMES = false;
@@ -30,7 +31,7 @@ public class MyEngine extends Engine {
 	 * service times.
 	 */
 	public MyEngine() {
-		servicePoints = new ServicePoint[3];
+		servicePoints = new ServicePointController[3];
 
 		if (TEXTDEMO) {
 			/* special setup for the example in text
@@ -92,16 +93,16 @@ public class MyEngine extends Engine {
 				// normal distribution used to model service times
 				serviceTime = new Normal(10, 6, Integer.toUnsignedLong(r.nextInt()));
 
-			servicePoints[0] = new ServicePoint(serviceTime, eventList, EventType.DEP1);
-			servicePoints[1] = new ServicePoint(serviceTime, eventList, EventType.DEP2);
-			servicePoints[2] = new ServicePoint(serviceTime, eventList, EventType.DEP3);
+			servicePoints[0] = new ServicePointController(3,serviceTime, eventList, EventType.DEP1);
+			servicePoints[1] = new ServicePointController(3,serviceTime, eventList, EventType.DEP2);
+			servicePoints[2] = new ServicePointController(3,serviceTime, eventList, EventType.DEP3);
 
 			arrivalProcess = new ArrivalProcess(arrivalTime, eventList, EventType.ARR1);
 		} else {
 			/* more realistic simulation case with variable customer arrival times and service times */
-			servicePoints[0] = new ServicePoint(new Normal(10, 6), eventList, EventType.DEP1);
-			servicePoints[1] = new ServicePoint(new Normal(10, 10), eventList, EventType.DEP2);
-			servicePoints[2] = new ServicePoint(new Normal(5, 3), eventList, EventType.DEP3);
+			servicePoints[0] = new ServicePointController(1,new Normal(10, 6), eventList, EventType.DEP1);
+			servicePoints[1] = new ServicePointController(1,new Normal(10, 10), eventList, EventType.DEP2);
+			servicePoints[2] = new ServicePointController(1,new Normal(5, 3), eventList, EventType.DEP3);
 
 			arrivalProcess = new ArrivalProcess(new Negexp(15, 5), eventList, EventType.ARR1);
 		}
@@ -142,9 +143,14 @@ public class MyEngine extends Engine {
 
 	@Override
 	protected void tryCEvents() {
-		for (ServicePoint p: servicePoints){
+		Trace.out(Trace.Level.INFO, "Checking service points at time " + Clock.getInstance().getClock());
+		Arrays.stream(servicePoints).forEach(ServicePointController::printQueues);
+		for (ServicePointController p: servicePoints){
+			Trace.out(Trace.Level.INFO, "Controller reserved? " + p.isReserved() + ", onQueue? " + p.isOnQueue());
+
 			if (!p.isReserved() && p.isOnQueue()){
 				p.beginService();
+
 			}
 		}
 	}

@@ -77,4 +77,9 @@ public class Customer {
 		double mean = sum/id;
 		System.out.println("Current mean of the customer service times " + mean);
 	}
+
+	@Override
+	public String toString() {
+		return String.valueOf(this.id);
+	}
 }

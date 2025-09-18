@@ -14,5 +14,5 @@ javafx {
 }
 
 application {
-    mainClass = 'fi.group4.Main'
+    mainClass = 'fi.group4.project.Main'
 }

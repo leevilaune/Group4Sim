@@ -1,14 +1,10 @@
 package simu.framework;
 
-/**
- * Event holds three-phase simulation event information; type and time of the event.
- * Events are compared according to time.
- */
 public class Event implements Comparable<Event> {
 	private IEventType type;
 	private double time;
 	
-	public Event(IEventType type, double time){
+	public Event(IEventType type, double time) {
 		this.type = type;
 		this.time = time;
 	}

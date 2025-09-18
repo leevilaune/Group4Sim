@@ -4,6 +4,7 @@ import eduni.distributions.ContinuousGenerator;
 import eduni.distributions.Negexp;
 import eduni.distributions.Normal;
 import simu.framework.Engine;
+import simu.framework.IEngine;
 import simu.framework.Trace;
 import simu.framework.Trace.Level;
 import simu.model.MyEngine;
@@ -17,7 +18,7 @@ public class Simulator {
 	public static void main(String[] args) {
 		Trace.setTraceLevel(Level.INFO);
 
-		Engine m = new MyEngine();
+		Engine m = new MyEngine(null);
 		m.setSimulationTime(1000);
 		m.run();
 	}

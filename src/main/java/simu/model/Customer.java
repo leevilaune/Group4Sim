@@ -20,7 +20,7 @@ public class Customer {
 	public Customer() {
 	    id = i++;
 	    
-		arrivalTime = Clock.getInstance().getClock();
+		arrivalTime = Clock.getInstance().getTime();
 		Trace.out(Trace.Level.INFO, "New customer #" + id + " arrived at  " + arrivalTime);
 	}
 

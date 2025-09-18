@@ -1,14 +1,11 @@
 package simu.framework;
 
-/**
- * Singleton for holding global simulation time
- */
 public class Clock {
-	private double clock;
+	private double time;
 	private static Clock instance;
 	
 	private Clock(){
-		clock = 0;
+		time = 0;
 	}
 	
 	public static Clock getInstance(){
@@ -18,11 +15,11 @@ public class Clock {
 		return instance;
 	}
 	
-	public void setClock(double clock){
-		this.clock = clock;
+	public void setTime(double time){
+		this.time = time;
 	}
 
-	public double getClock(){
-		return clock;
+	public double getTime(){
+		return time;
 	}
 }

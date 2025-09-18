@@ -1,5 +1,6 @@
 package simu.model;
 
+import controller.IControllerMtoV;
 import eduni.distributions.ContinuousGenerator;
 import eduni.distributions.Normal;
 import eduni.distributions.Uniform;
@@ -18,7 +19,7 @@ import java.util.Random;
  * Simulate three service points, customer goes through all three service points to get serviced
  * 		--> SP1 --> SP2 --> SP3 -->
  */
-public class MyEngine extends Engine {
+public class MyEngine extends Engine implements IEngine {
 	private ArrivalProcess arrivalProcess;
 	private ServicePointController[] servicePoints;
 	public static final boolean TEXTDEMO = true;
@@ -30,8 +31,11 @@ public class MyEngine extends Engine {
 	 * We use exponent distribution for customer arrival times and normal distribution for the
 	 * service times.
 	 */
-	public MyEngine() {
-		servicePoints = new ServicePointController[3];
+
+
+	public MyEngine(IControllerMtoV controller) {
+		super(controller);
+        servicePoints = new ServicePointController[3];
 
 		if (TEXTDEMO) {
 			/* special setup for the example in text
@@ -109,10 +113,9 @@ public class MyEngine extends Engine {
 	}
 
 	@Override
-	protected void initialize() {	// First arrival in the system
-		arrivalProcess.generateNextEvent();
+	protected void initialization() {
+		arrivalProcess.generateNext();
 	}
-
 	@Override
 	protected void runEvent(Event t) {  // B phase events
 		Customer a;
@@ -120,7 +123,7 @@ public class MyEngine extends Engine {
 		switch ((EventType)t.getType()) {
 		case ARR1:
 			servicePoints[0].addQueue(new Customer());
-			arrivalProcess.generateNextEvent();
+			arrivalProcess.generateNext();
 			break;
 
 		case DEP1:
@@ -135,7 +138,7 @@ public class MyEngine extends Engine {
 
 		case DEP3:
 			a = servicePoints[2].removeQueue();
-			a.setRemovalTime(Clock.getInstance().getClock());
+			a.setRemovalTime(Clock.getInstance().getTime());
 		    a.reportResults();
 			break;
 		}
@@ -143,7 +146,7 @@ public class MyEngine extends Engine {
 
 	@Override
 	protected void tryCEvents() {
-		Trace.out(Trace.Level.INFO, "Checking service points at time " + Clock.getInstance().getClock());
+		Trace.out(Trace.Level.INFO, "Checking service points at time " + Clock.getInstance().getTime());
 		Arrays.stream(servicePoints).forEach(ServicePointController::printQueues);
 		for (ServicePointController p: servicePoints){
 			Trace.out(Trace.Level.INFO, "Controller reserved? " + p.isReserved() + ", onQueue? " + p.isOnQueue());
@@ -157,7 +160,22 @@ public class MyEngine extends Engine {
 
 	@Override
 	protected void results() {
-		System.out.println("Simulation ended at " + Clock.getInstance().getClock());
+		System.out.println("Simulation ended at " + Clock.getInstance().getTime());
 		System.out.println("Results ... are currently missing");
+	}
+
+	@Override
+	public void setSimulationTime(double time) {
+
+	}
+
+	@Override
+	public void setDelay(long time) {
+
+	}
+
+	@Override
+	public long getDelay() {
+		return 0;
 	}
 }

@@ -78,7 +78,7 @@ public class ServicePoint implements Comparable<ServicePoint>{
 
         // simplest way to add rollbacks is to add a probability here that chooses the eventType out of the possibilities
 
-		eventList.add(new Event(eventTypeScheduled, Clock.getInstance().getClock()+serviceTime));
+		eventList.add(new Event(eventTypeScheduled, Clock.getInstance().getTime()+serviceTime));
 	}
 
 	/**

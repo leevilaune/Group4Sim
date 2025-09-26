@@ -8,5 +8,5 @@ import simu.framework.IEventType;
  * TODO: This must be adapted to the actual simulator
  */
 public enum EventType implements IEventType {
-	ARR1, DEP1, DEP2, DEP3, DEP4;
+	ARR1, PLANNING, IMPL, TESTING, REVIEW,;
 }

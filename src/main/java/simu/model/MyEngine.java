@@ -34,10 +34,10 @@ public class MyEngine extends Engine {
 		servicePoints = new ServicePointController[4];
 
 			/* more realistic simulation case with variable customer arrival times and service times */
-			servicePoints[0] = new ServicePointController(1,new Normal(10, 6), eventList, EventType.DEP1);
-			servicePoints[1] = new ServicePointController(1,new Normal(10, 10), eventList, EventType.DEP2);
-			servicePoints[2] = new ServicePointController(1,new Normal(5, 3), eventList, EventType.DEP3);
-            servicePoints[3] = new ServicePointController(1,new Normal(5, 3), eventList, EventType.DEP4);
+			servicePoints[0] = new ServicePointController(1,new Normal(10, 6), eventList, EventType.PLANNING);
+			servicePoints[1] = new ServicePointController(1,new Normal(10, 10), eventList, EventType.IMPL);
+			servicePoints[2] = new ServicePointController(1,new Normal(5, 3), eventList, EventType.TESTING);
+            servicePoints[3] = new ServicePointController(1,new Normal(5, 3), eventList, EventType.REVIEW);
 
 			arrivalProcess = new ArrivalProcess(new Negexp(15, 5), eventList, EventType.ARR1);
 
@@ -58,12 +58,12 @@ public class MyEngine extends Engine {
 			arrivalProcess.generateNextEvent();
 			break;
 
-		case DEP1:
+		case PLANNING:
 			a = servicePoints[0].removeQueue();
 			servicePoints[1].addQueue(a);
 			break;
 
-		case DEP2:
+		case IMPL:
 			a = servicePoints[1].removeQueue();
 
             if(Math.random() < 0.9){
@@ -77,11 +77,11 @@ public class MyEngine extends Engine {
             }
 			break;
 
-        case DEP3:
+        case TESTING:
             a = servicePoints[2].removeQueue();
             servicePoints[3].addQueue(a);
 
-		case DEP4:
+		case REVIEW:
 			a = servicePoints[3].removeQueue();
 
             if(Math.random() < 0.9){

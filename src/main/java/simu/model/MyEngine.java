@@ -21,9 +21,9 @@ import java.util.Random;
 public class MyEngine extends Engine {
 	private ArrivalProcess arrivalProcess;
 	private ServicePointController[] servicePoints;
-	public static final boolean TEXTDEMO = true;
-	public static final boolean FIXEDARRIVALTIMES = false;
-	public static final boolean FXIEDSERVICETIMES = false;
+
+
+
 
 	/**
 	 * Service Points and random number generator with different distributions are created here.
@@ -31,81 +31,16 @@ public class MyEngine extends Engine {
 	 * service times.
 	 */
 	public MyEngine() {
-		servicePoints = new ServicePointController[3];
+		servicePoints = new ServicePointController[4];
 
-		if (TEXTDEMO) {
-			/* special setup for the example in text
-			 * https://github.com/jacquesbergelius/PP-CourseMaterial/blob/master/1.1_Introduction_to_Simulation.md
-			 */
-			Random r = new Random();
-
-			ContinuousGenerator arrivalTime = null;
-			if (FIXEDARRIVALTIMES) {
-				/* version where the arrival times are constant (and greater than service times) */
-
-				// make a special "random number distribution" which produces constant value for the customer arrival times
-				arrivalTime = new ContinuousGenerator() {
-					@Override
-					public double sample() {
-						return 10;
-					}
-
-					@Override
-					public void setSeed(long seed) {
-					}
-
-					@Override
-					public long getSeed() {
-						return 0;
-					}
-
-					@Override
-					public void reseed() {
-					}
-				};
-			} else
-				// exponential distribution is used to model customer arrivals times, to get variability between programs runs, give a variable seed
-				arrivalTime = new Negexp(10, Integer.toUnsignedLong(r.nextInt()));
-
-			ContinuousGenerator serviceTime = null;
-			if (FXIEDSERVICETIMES) {
-				// make a special "random number distribution" which produces constant value for the service time in service points
-				serviceTime = new ContinuousGenerator() {
-					@Override
-					public double sample() {
-						return 9;
-					}
-
-					@Override
-					public void setSeed(long seed) {
-					}
-
-					@Override
-					public long getSeed() {
-						return 0;
-					}
-
-					@Override
-					public void reseed() {
-					}
-				};
-			} else
-				// normal distribution used to model service times
-				serviceTime = new Normal(10, 6, Integer.toUnsignedLong(r.nextInt()));
-
-			servicePoints[0] = new ServicePointController(3,serviceTime, eventList, EventType.DEP1);
-			servicePoints[1] = new ServicePointController(3,serviceTime, eventList, EventType.DEP2);
-			servicePoints[2] = new ServicePointController(3,serviceTime, eventList, EventType.DEP3);
-
-			arrivalProcess = new ArrivalProcess(arrivalTime, eventList, EventType.ARR1);
-		} else {
 			/* more realistic simulation case with variable customer arrival times and service times */
 			servicePoints[0] = new ServicePointController(1,new Normal(10, 6), eventList, EventType.DEP1);
 			servicePoints[1] = new ServicePointController(1,new Normal(10, 10), eventList, EventType.DEP2);
 			servicePoints[2] = new ServicePointController(1,new Normal(5, 3), eventList, EventType.DEP3);
+            servicePoints[3] = new ServicePointController(1,new Normal(5, 3), eventList, EventType.DEP4);
 
 			arrivalProcess = new ArrivalProcess(new Negexp(15, 5), eventList, EventType.ARR1);
-		}
+
 	}
 
 	@Override
@@ -130,13 +65,35 @@ public class MyEngine extends Engine {
 
 		case DEP2:
 			a = servicePoints[1].removeQueue();
-			servicePoints[2].addQueue(a);
+
+            if(Math.random() < 0.9){
+                // chance for servicePoints[0].addQueue(a)
+                servicePoints[0].addQueue(a);
+
+                //animation logic here?
+            }else{
+                servicePoints[2].addQueue(a);
+                //animation logic here?
+            }
 			break;
 
-		case DEP3:
-			a = servicePoints[2].removeQueue();
-			a.setRemovalTime(Clock.getInstance().getClock());
-		    a.reportResults();
+        case DEP3:
+            a = servicePoints[2].removeQueue();
+            servicePoints[3].addQueue(a);
+
+		case DEP4:
+			a = servicePoints[3].removeQueue();
+
+            if(Math.random() < 0.9){
+                //placeholder math.randoms
+                // chance for rollback servicePoints[1].addQueue(a)
+                servicePoints[1].addQueue(a);
+
+            }else{
+                a.setRemovalTime(Clock.getInstance().getClock());
+                a.reportResults();
+            }
+
 			break;
 		}
 	}

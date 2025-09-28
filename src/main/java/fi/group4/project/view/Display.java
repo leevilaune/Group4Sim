@@ -5,6 +5,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.event.EventHandler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Display extends Canvas {
     private double x = 40;
     private double y = 60;
@@ -13,13 +16,19 @@ public class Display extends Canvas {
     private boolean xCollision = false;
     private boolean yCollision = false;
     private final GraphicsContext gc;
+    private double speed;
+    private Color color;
+    private final List<BallThread> balls = new ArrayList<>();
 
-    public Display(int w, int h) {
+    public Display(int w, int h, Color color) {
         super(w, h);
         gc = this.getGraphicsContext2D();
-
-        this.setOnMouseClicked(e -> setTarget(e.getX(), e.getY()));
-
+        this.color = color;
+        this.setOnMouseClicked(e -> {
+            for (BallThread b : balls) {
+                b.setTarget(e.getX(), e.getY());
+            }
+        });
     }
 
     private void clrDisplay() {
@@ -27,9 +36,24 @@ public class Display extends Canvas {
         gc.fillRect(0, 0, this.getWidth(), this.getHeight());
     }
 
+    public void addBall(double x, double y, double speed, Color color) {
+        BallThread bt = new BallThread(this,x, y, speed,color);
+        this.balls.add(bt);
+        bt.start();
+
+        drawBalls();
+    }
+
+    public void drawBalls() {
+        clrDisplay();
+        for (BallThread b : this.balls) {
+            gc.setFill(b.getColor());
+            gc.fillOval(b.getX(), b.getY(), 30, 30);
+        }
+    }
     public void drawBall() {
         clrDisplay();
-        gc.setFill(Color.BLUEVIOLET);
+        gc.setFill(this.color);
         gc.fillOval(x, y, 30, 30);
     }
 

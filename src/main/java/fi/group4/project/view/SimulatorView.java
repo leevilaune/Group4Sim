@@ -12,12 +12,19 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.util.HashMap;
+
 public class SimulatorView extends Application {
 
     private SimulatorController controller;
 
+    private HashMap<String, TextField> queueCounters;
+    private HashMap<String, TextField> taskCounters;
+
     public SimulatorView(){
         this.controller = new SimulatorController(this);
+        this.queueCounters = new HashMap<>();
+        this.taskCounters = new HashMap<>();
     }
     @Override
     public void start(Stage stage) {
@@ -43,14 +50,17 @@ public class SimulatorView extends Application {
         grid.setVgap(10);
         grid.setStyle("-fx-padding: 20;");
 
-        for (int i = 0; i < 4; i++) {
-            Label label = new Label("Label " + (i + 1) + ":");
+        String[] labels = {"Planning","Implementation","Testing", "Review", "Presentation"};
+        int i = 0;
+        for (String s : labels) {
+            Label label = new Label(s);
             TextField textField1 = new TextField();
             TextField textField2 = new TextField();
 
             grid.add(label, 0, i);
             grid.add(textField1, 1, i);
             grid.add(textField2, 2, i);
+            i++;
         }
 
         Label sliderLabel = new Label("Adjust Value:");

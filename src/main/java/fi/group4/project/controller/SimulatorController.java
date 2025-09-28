@@ -45,4 +45,5 @@ public class SimulatorController implements IControllerVtoM, IControllerMtoV{
     public void decreaseSpeed() {
         this.engine.setDelay((long) (this.engine.getDelay()*0.9f));
     }
+
 }

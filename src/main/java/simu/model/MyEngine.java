@@ -155,6 +155,22 @@ public class MyEngine extends Engine{
 		}
 	}
 
+	public ArrivalProcess getArrivalProcess() {
+		return arrivalProcess;
+	}
+
+	public void setArrivalProcess(ArrivalProcess arrivalProcess) {
+		this.arrivalProcess = arrivalProcess;
+	}
+
+	public ServicePointController[] getServicePoints() {
+		return servicePoints;
+	}
+
+	public void setServicePoints(ServicePointController[] servicePoints) {
+		this.servicePoints = servicePoints;
+	}
+
 	@Override
 	protected void results() {
 		System.out.println("Simulation ended at " + Clock.getInstance().getClock());

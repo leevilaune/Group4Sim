@@ -3,6 +3,7 @@ package simu.model;
 import eduni.distributions.ContinuousGenerator;
 import simu.framework.*;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Service Point implements the functionalities, calculations and reporting.
@@ -138,6 +139,12 @@ public class ServicePoint implements Comparable<ServicePoint>{
 
 	public void setReserved(boolean reserved) {
 		this.reserved = reserved;
+	}
+
+	public List<Integer> getCustomerIDs(){
+		return queue.stream()
+				.map(Customer::getId)
+				.toList();
 	}
 
 	@Override

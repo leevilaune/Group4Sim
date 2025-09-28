@@ -4,6 +4,7 @@ import eduni.distributions.ContinuousGenerator;
 import simu.framework.EventList;
 import simu.framework.Trace;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ServicePointController {
@@ -67,6 +68,19 @@ public class ServicePointController {
     public int reservedAmount(){
         return (int) Arrays.stream(this.servicePoints).filter(ServicePoint::isReserved).count();
     }
+
+    public EventType getType(){
+        return this.servicePoints[0].getEventTypeScheduled();
+    }
+
+    public ArrayList<Integer> getTotalQueue(){
+        ArrayList<Integer> tasks = new ArrayList<>();
+        for (ServicePoint sp : this.servicePoints){
+            tasks.addAll(sp.getCustomerIDs());
+        }
+        return tasks;
+    }
+
 
     @Override
     public String toString() {

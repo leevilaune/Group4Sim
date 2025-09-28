@@ -3,6 +3,7 @@ package simu.model;
 import eduni.distributions.ContinuousGenerator;
 import eduni.distributions.Normal;
 import eduni.distributions.Uniform;
+import fi.group4.project.controller.SimulatorController;
 import simu.framework.*;
 import eduni.distributions.Negexp;
 
@@ -18,21 +19,24 @@ import java.util.Random;
  * Simulate three service points, customer goes through all three service points to get serviced
  * 		--> SP1 --> SP2 --> SP3 -->
  */
-public class MyEngine extends Engine {
+public class MyEngine extends Engine{
 	private ArrivalProcess arrivalProcess;
 	private ServicePointController[] servicePoints;
 	public static final boolean TEXTDEMO = true;
 	public static final boolean FIXEDARRIVALTIMES = false;
 	public static final boolean FXIEDSERVICETIMES = false;
+	public SimulatorController controller;
+
 
 	/**
 	 * Service Points and random number generator with different distributions are created here.
 	 * We use exponent distribution for customer arrival times and normal distribution for the
 	 * service times.
 	 */
-	public MyEngine() {
+	public MyEngine(SimulatorController controller) {
+		super(controller);
 		servicePoints = new ServicePointController[3];
-
+		this.controller = controller;
 		if (TEXTDEMO) {
 			/* special setup for the example in text
 			 * https://github.com/jacquesbergelius/PP-CourseMaterial/blob/master/1.1_Introduction_to_Simulation.md
@@ -154,6 +158,29 @@ public class MyEngine extends Engine {
 			}
 		}
 	}
+
+	public ArrivalProcess getArrivalProcess() {
+		return arrivalProcess;
+	}
+
+	public void setArrivalProcess(ArrivalProcess arrivalProcess) {
+		this.arrivalProcess = arrivalProcess;
+	}
+
+	public ServicePointController[] getServicePoints() {
+		return servicePoints;
+	}
+
+	public void setServicePoints(ServicePointController[] servicePoints) {
+		this.servicePoints = servicePoints;
+	}
+
+	@Override
+	public void updateCounters(){
+		this.controller.updateCounters(this.servicePoints);
+
+	}
+
 
 	@Override
 	protected void results() {

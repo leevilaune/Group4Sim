@@ -18,7 +18,7 @@ import java.util.Random;
  * Simulate three service points, customer goes through all three service points to get serviced
  * 		--> SP1 --> SP2 --> SP3 -->
  */
-public class MyEngine extends Engine {
+public class MyEngine extends Engine{
 	private ArrivalProcess arrivalProcess;
 	private ServicePointController[] servicePoints;
 	public static final boolean TEXTDEMO = true;

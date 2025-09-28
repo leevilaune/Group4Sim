@@ -3,6 +3,7 @@ package test;
 import eduni.distributions.ContinuousGenerator;
 import eduni.distributions.Negexp;
 import eduni.distributions.Normal;
+import fi.group4.project.controller.SimulatorController;
 import simu.framework.Engine;
 import simu.framework.Trace;
 import simu.framework.Trace.Level;
@@ -17,7 +18,7 @@ public class Simulator {
 	public static void main(String[] args) {
 		Trace.setTraceLevel(Level.INFO);
 
-		Engine m = new MyEngine();
+		Engine m = new MyEngine(null);
 		m.setSimulationTime(1000);
 		m.run();
 	}

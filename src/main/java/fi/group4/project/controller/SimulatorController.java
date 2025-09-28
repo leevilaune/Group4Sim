@@ -3,6 +3,10 @@ package fi.group4.project.controller;
 import fi.group4.project.view.SimulatorView;
 import simu.framework.Engine;
 import simu.model.MyEngine;
+import simu.model.ServicePoint;
+import simu.model.ServicePointController;
+
+import java.util.Arrays;
 
 public class SimulatorController implements IControllerVtoM, IControllerMtoV{
 
@@ -10,7 +14,7 @@ public class SimulatorController implements IControllerVtoM, IControllerMtoV{
     private SimulatorView view;
 
     public SimulatorController(SimulatorView view){
-        this.engine = new MyEngine();
+        this.engine = new MyEngine(this);
         this.engine.setSimulationTime(1000);
         this.engine.start();
         this.engine.setDelay(1000);
@@ -46,4 +50,8 @@ public class SimulatorController implements IControllerVtoM, IControllerMtoV{
         this.engine.setDelay((long) (this.engine.getDelay()*0.9f));
     }
 
+    public void updateCounters(ServicePointController[] servicePointControllers){
+        Arrays.stream(servicePointControllers).forEach(System.out::println);
+        this.view.updateCounters(servicePointControllers);
+    }
 }

@@ -1,5 +1,7 @@
 package simu.framework;
 
+import fi.group4.project.controller.IControllerMtoV;
+import fi.group4.project.controller.SimulatorController;
 import simu.model.ServicePoint;
 
 public abstract class Engine extends Thread {
@@ -8,10 +10,12 @@ public abstract class Engine extends Thread {
 	private Clock clock;
 	protected EventList eventList;
 	protected ServicePoint[] servicePoints;
+	private SimulatorController controller;
 
-	public Engine() {
+	public Engine(SimulatorController controller) {
 		clock = Clock.getInstance();
 		eventList = new EventList();
+		this.controller = controller;
 	}
 
 	public void setSimulationTime(double time) {
@@ -35,6 +39,7 @@ public abstract class Engine extends Thread {
 			clock.setClock(currentTime());
 			runBEvents();
 			tryCEvents();
+			this.updateCounters();
 		}
 
 		results();
@@ -70,6 +75,9 @@ public abstract class Engine extends Thread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+	//overwritten in MyEngine
+	public void updateCounters(){
 	}
 
 	protected abstract void initialize(); 	// Defined in simu.model-package's class who is inheriting the Engine class

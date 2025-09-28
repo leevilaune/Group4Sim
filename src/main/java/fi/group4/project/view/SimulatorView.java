@@ -11,20 +11,23 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import simu.model.EventType;
+import simu.model.ServicePointController;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class SimulatorView extends Application {
 
     private SimulatorController controller;
 
-    private HashMap<String, TextField> queueCounters;
-    private HashMap<String, TextField> taskCounters;
+    private HashMap<EventType, TextField> queueCounters;
+    private HashMap<EventType, TextField> reservedCounters;
 
     public SimulatorView(){
         this.controller = new SimulatorController(this);
         this.queueCounters = new HashMap<>();
-        this.taskCounters = new HashMap<>();
+        this.reservedCounters = new HashMap<>();
     }
     @Override
     public void start(Stage stage) {
@@ -39,46 +42,64 @@ public class SimulatorView extends Application {
 
         Scene scene = new Scene(pane,600,500);
         pane.getChildren().add(d);
-        pane.getChildren().add(createFormGrid());
+        pane.getChildren().add(createCounterGrid());
         stage.setScene(scene);
         stage.show();
     }
 
-    private GridPane createFormGrid() {
+    private GridPane createCounterGrid() {
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setStyle("-fx-padding: 20;");
 
-        String[] labels = {"Planning","Implementation","Testing", "Review", "Presentation"};
-        int i = 0;
-        for (String s : labels) {
-            Label label = new Label(s);
-            TextField textField1 = new TextField();
-            TextField textField2 = new TextField();
+        grid.add(new Label("Event Type"), 0, 0);
+        grid.add(new Label("Queue"), 1, 0);
+        grid.add(new Label("Reserved"), 2, 0);
+
+        EventType[] labels = {EventType.ARR1, EventType.DEP1, EventType.DEP2, EventType.DEP3};
+        int i = 1;
+        for (EventType s : labels) {
+            Label label = new Label(s.name());
+            TextField queueField = new TextField();
+            TextField reservedField = new TextField();
+
+            this.queueCounters.putIfAbsent(s, queueField);
+            this.reservedCounters.putIfAbsent(s, reservedField);
 
             grid.add(label, 0, i);
-            grid.add(textField1, 1, i);
-            grid.add(textField2, 2, i);
+            grid.add(queueField, 1, i);
+            grid.add(reservedField, 2, i);
             i++;
         }
 
-        Label sliderLabel = new Label("Adjust Value:");
-        Slider slider = new Slider(0, 100, 50);
+        Label sliderLabel = new Label("Speed:");
+        Slider slider = new Slider(0, 1000, 500);
         slider.setShowTickMarks(true);
         slider.setShowTickLabels(true);
         slider.setMajorTickUnit(25);
         slider.setMinorTickCount(4);
         slider.setBlockIncrement(1);
 
-        int sliderRow = 4;
+        int sliderRow = i;
         grid.add(sliderLabel, 0, sliderRow);
         grid.add(slider, 1, sliderRow, 2, 1);
 
         slider.valueProperty().addListener((observable, oldValue, newValue) -> {
             this.controller.setSpeed(slider.getValue());
         });
+
         return grid;
     }
 
+    public void updateCounters(ServicePointController[] servicePointControllers){
+        Arrays.stream(servicePointControllers).forEach(servicePointController -> {
+            this.queueCounters.get(servicePointController.getType())
+                    .setText(String.valueOf(servicePointController.getTotalQueue()));
+        });
+        Arrays.stream(servicePointControllers).forEach(servicePointController -> {
+            this.reservedCounters.get(servicePointController.getType())
+                    .setText(String.valueOf(servicePointController.reservedAmount()));
+        });
+    }
 }

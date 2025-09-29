@@ -123,7 +123,7 @@ public class MyEngine extends Engine{
 
 		switch ((EventType)t.getType()) {
 		case ARR1:
-			servicePoints[0].addQueue(new Customer());
+			servicePoints[0].addQueue(new Customer((int) (Math.random()*3)));
 			arrivalProcess.generateNextEvent();
 			break;
 

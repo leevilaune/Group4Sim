@@ -73,8 +73,8 @@ public class ServicePointController {
         return this.servicePoints[0].getEventTypeScheduled();
     }
 
-    public ArrayList<Integer> getTotalQueue(){
-        ArrayList<Integer> tasks = new ArrayList<>();
+    public ArrayList<String> getTotalQueue(){
+        ArrayList<String> tasks = new ArrayList<>();
         for (ServicePoint sp : this.servicePoints){
             tasks.addAll(sp.getCustomerIDs());
         }

@@ -7,17 +7,20 @@ import simu.framework.*;
  *
  * TODO: This is to be implemented according to the requirements of the simulation model (data!)
  */
-public class Customer {
+public class Customer implements Comparable<Customer> {
 	private double arrivalTime;
 	private double removalTime;
 	private int id;
 	private static int i = 1;
 	private static long sum = 0;
+	private int priority;
 
 	/**
 	 * Create a unique customer
 	 */
-	public Customer() {
+	public Customer(int priority) {
+		this.priority = priority;
+
 	    id = i++;
 	    
 		arrivalTime = Clock.getInstance().getClock();
@@ -78,8 +81,25 @@ public class Customer {
 		System.out.println("Current mean of the customer service times " + mean);
 	}
 
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+
 	@Override
 	public String toString() {
-		return String.valueOf(this.id);
+		return String.valueOf(this.id +":"+this.priority );
+	}
+
+	@Override
+	public int compareTo(Customer o) {
+		return this.priority-o.getPriority();
 	}
 }

@@ -3,6 +3,8 @@ package simu.model;
 import eduni.distributions.ContinuousGenerator;
 import simu.framework.*;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.PriorityQueue;
 
 /**
  * Service Point implements the functionalities, calculations and reporting.
@@ -19,7 +21,7 @@ import java.util.LinkedList;
  * Service point collects measurement parameters.
  */
 public class ServicePoint implements Comparable<ServicePoint>{
-	private LinkedList<Customer> queue = new LinkedList<>(); // Data Structure used
+	private PriorityQueue<Customer> queue = new PriorityQueue<>(); // Data Structure used
 	private ContinuousGenerator generator;
 	private EventList eventList;
 	private EventType eventTypeScheduled;
@@ -104,11 +106,11 @@ public class ServicePoint implements Comparable<ServicePoint>{
         return Double.compare(o.queue.peek().getArrivalTime(), this.queue.peek().getArrivalTime());
 	}
 
-	public LinkedList<Customer> getQueue() {
+	public PriorityQueue<Customer> getQueue() {
 		return queue;
 	}
 
-	public void setQueue(LinkedList<Customer> queue) {
+	public void setQueue(PriorityQueue<Customer> queue) {
 		this.queue = queue;
 	}
 
@@ -138,6 +140,12 @@ public class ServicePoint implements Comparable<ServicePoint>{
 
 	public void setReserved(boolean reserved) {
 		this.reserved = reserved;
+	}
+
+	public List<String> getCustomerIDs(){
+		return queue.stream()
+				.map(Customer::toString)
+				.toList();
 	}
 
 	@Override

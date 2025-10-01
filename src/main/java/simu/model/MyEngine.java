@@ -68,7 +68,7 @@ public class MyEngine extends Engine{
 
 		case DEP2:
 			a = servicePoints[1].removeQueue();
-            if(Math.random() < 0.9) {
+            if(Math.random() < 0.6) {
                 //continues normally
                 servicePoints[2].addQueue(a);
             }else{
@@ -79,13 +79,13 @@ public class MyEngine extends Engine{
 
 		case DEP3:
 			a = servicePoints[2].removeQueue();
-            servicePoints[4].addQueue(a);
+            servicePoints[3].addQueue(a);
 
 			break;
 
         case DEP4:
             a = servicePoints[3].removeQueue();
-            if(Math.random() < 0.9) {
+            if(Math.random() < 0.6) {
                 //continues normally
                 servicePoints[4].addQueue(a);
             }else{

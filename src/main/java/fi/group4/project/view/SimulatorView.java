@@ -57,7 +57,7 @@ public class SimulatorView extends Application {
         grid.add(new Label("Queue"), 1, 0);
         grid.add(new Label("Reserved"), 2, 0);
 
-        EventType[] labels = {EventType.ARR1, EventType.DEP1, EventType.DEP2, EventType.DEP3};
+        EventType[] labels = {EventType.ARR1, EventType.DEP1, EventType.DEP2, EventType.DEP3,EventType.DEP4,EventType.DEP5};
         int i = 1;
         for (EventType s : labels) {
             Label label = new Label(s.name());

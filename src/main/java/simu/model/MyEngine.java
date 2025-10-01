@@ -68,7 +68,13 @@ public class MyEngine extends Engine{
 
 		case DEP2:
 			a = servicePoints[1].removeQueue();
-			servicePoints[2].addQueue(a);
+            if(Math.random() < 0.9) {
+                //continues normally
+                servicePoints[2].addQueue(a);
+            }else{
+                //rollback
+                servicePoints[0].addQueue(a);
+            }
 			break;
 
 		case DEP3:
@@ -79,11 +85,23 @@ public class MyEngine extends Engine{
 
         case DEP4:
             a = servicePoints[3].removeQueue();
-            servicePoints[4].addQueue(a);
+            if(Math.random() < 0.9) {
+                //continues normally
+                servicePoints[4].addQueue(a);
+            }else{
+                //rollback
+                servicePoints[1].addQueue(a);
+            }
             break;
 
         case DEP5:
             a = servicePoints[4].removeQueue();
+            if(Math.random() < 0.5){
+                //not sure yet how we use internal and external presentation in simulation
+                //internal presentation
+            }else{
+                //external presentation
+            }
 
             a.setRemovalTime(Clock.getInstance().getClock());
             a.reportResults();

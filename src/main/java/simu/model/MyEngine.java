@@ -57,17 +57,21 @@ public class MyEngine extends Engine{
 
 		switch ((EventType)t.getType()) {
 		case ARR1:
-			servicePoints[0].addQueue(new Customer((int) (Math.random()*3)));
+            a = new Customer((int) (Math.random()*3));
+			servicePoints[0].addQueue(a);
+
 			arrivalProcess.generateNextEvent();
 			break;
 
 		case DEP1:
 			a = servicePoints[0].removeQueue();
-			servicePoints[1].addQueue(a);
+
+            servicePoints[1].addQueue(a);
 			break;
 
 		case DEP2:
 			a = servicePoints[1].removeQueue();
+
             if(Math.random() < 0.6) {
                 //continues normally
                 servicePoints[2].addQueue(a);
@@ -79,12 +83,14 @@ public class MyEngine extends Engine{
 
 		case DEP3:
 			a = servicePoints[2].removeQueue();
+
             servicePoints[3].addQueue(a);
 
 			break;
 
         case DEP4:
             a = servicePoints[3].removeQueue();
+
             if(Math.random() < 0.6) {
                 //continues normally
                 servicePoints[4].addQueue(a);
@@ -152,4 +158,5 @@ public class MyEngine extends Engine{
 		System.out.println("Simulation ended at " + Clock.getInstance().getClock());
 		System.out.println("Results ... are currently missing");
 	}
+
 }

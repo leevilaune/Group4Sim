@@ -89,4 +89,26 @@ public class ServicePointController {
                 ", points" + Arrays.toString(this.servicePoints) +
                 '}';
     }
+
+    public double getResponseTimeInSp(){
+        double totalTasksThroughSp = 0;
+        //variable below will hod the que time + service time of all sp of one type
+        double totalWaitTimeInSp = 0;
+
+        for (ServicePoint sp : this.servicePoints){
+            totalTasksThroughSp += sp.getTotalTaskServiced();
+            totalWaitTimeInSp += sp.getTotalWaitingTimeInSp();
+        }
+        return totalWaitTimeInSp/totalTasksThroughSp;
+    }
+
+    public double getAverageQueLenghtAtSp(){
+        //needs total simulationtime as parameter (by default 1000)
+        double totalWaitTimeInSp = 0;
+        for (ServicePoint sp : this.servicePoints){
+            totalWaitTimeInSp += sp.getTotalWaitingTimeInSp();
+        }
+        return totalWaitTimeInSp/1000;
+    }
+
 }

@@ -28,7 +28,10 @@ public class ServicePoint implements Comparable<ServicePoint>{
 	//Queuestrategy strategy; // option: ordering of the customer
 	private boolean reserved = false;
 
+    private double totalUsageTime = 0;
+    private double totalTaskServiced = 0;
 
+    private double totalWaitingTimeInSp = 0;
 	/**
 	 * Create the service point with a waiting queue.
 	 *
@@ -48,7 +51,8 @@ public class ServicePoint implements Comparable<ServicePoint>{
 	 * @param a Customer to be queued
 	 */
 	public void addQueue(Customer a) {	// The first customer of the queue is always in service
-		queue.add(a);
+        queue.add(a);
+        a.setResponseTimeVariable();
 	}
 
 	/**
@@ -59,7 +63,9 @@ public class ServicePoint implements Comparable<ServicePoint>{
 	 */
 	public Customer removeQueue() {		// Remove serviced customer
 		reserved = false;
-		return queue.poll();
+        Customer ab = queue.poll();
+        totalWaitingTimeInSp += Clock.getInstance().getClock() - ab.getResponseTimeVariable();
+		return ab;
 	}
 
 	/**
@@ -75,13 +81,26 @@ public class ServicePoint implements Comparable<ServicePoint>{
 		double serviceTime = generator.sample();
         // The average time spent in servicePoint is gotten from here with a simple getter or having some kind
         // of counter during the run of the program and collects the serviceTimes
+        totalUsageTime += serviceTime;
+        totalTaskServiced += 1;
+        // a way to add rollbacks is to add a probability here that chooses the eventType out of the possibilities
 
-        // all servicePoint statistics can be gotten from here by having some if else's based on eventType
 
-        // simplest way to add rollbacks is to add a probability here that chooses the eventType out of the possibilities
 
 		eventList.add(new Event(eventTypeScheduled, Clock.getInstance().getClock()+serviceTime));
 	}
+
+    public double getServicePointUtilization(){
+        //simulation time needs to be added as parameter (1000 is the default total simulation time)
+        return totalUsageTime/1000;
+    }
+    public double getServiceThroughput(){
+        //simulation time needs to be added as parameter(1000 is the default total simulation time)
+        return totalTaskServiced/1000;
+    }
+    public double getAverageServiceTime(){
+        return totalUsageTime/totalTaskServiced;
+    }
 
 	/**
 	 * Check whether the service point is busy
@@ -141,6 +160,18 @@ public class ServicePoint implements Comparable<ServicePoint>{
 	public void setReserved(boolean reserved) {
 		this.reserved = reserved;
 	}
+
+    public double getTotalUsageTime() {
+        return totalUsageTime;
+    }
+
+    public double getTotalTaskServiced() {
+        return totalTaskServiced;
+    }
+
+    public double getTotalWaitingTimeInSp(){
+        return totalWaitingTimeInSp;
+    }
 
 	public List<String> getCustomerIDs(){
 		return queue.stream()

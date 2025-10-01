@@ -15,6 +15,9 @@ public class Customer implements Comparable<Customer> {
 	private static long sum = 0;
 	private int priority;
 
+    private double responseTimeVariable = 0;
+
+
 	/**
 	 * Create a unique customer
 	 */
@@ -27,6 +30,12 @@ public class Customer implements Comparable<Customer> {
 		Trace.out(Trace.Level.INFO, "New customer #" + id + " arrived at  " + arrivalTime);
 	}
 
+    public void setResponseTimeVariable(){
+        responseTimeVariable = Clock.getInstance().getClock();
+    }
+    public double getResponseTimeVariable(){
+        return responseTimeVariable;
+    }
 	/**
 	 * Give the time when customer has been removed (from the system to be simulated)
 	 * @return Customer removal time

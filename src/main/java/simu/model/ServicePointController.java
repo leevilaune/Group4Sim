@@ -87,6 +87,8 @@ public class ServicePointController {
         return "SPController"+this.servicePoints[0].getEventTypeScheduled()+"{" +
                 "reserved=" + this.reservedAmount() +
                 ", points" + Arrays.toString(this.servicePoints) +
+                ", pointsAmount" + this.servicePoints.length +
+
                 '}';
     }
 

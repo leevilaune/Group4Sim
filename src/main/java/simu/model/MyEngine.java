@@ -34,16 +34,32 @@ public class MyEngine extends Engine{
 		super(controller);
 		servicePoints = new ServicePointController[5];
 		this.controller = controller;
-
 			/* more realistic simulation case with variable customer arrival times and service times */
+			/*
+
 			servicePoints[0] = new ServicePointController(1,new Normal(10, 6), eventList, EventType.DEP1);
 			servicePoints[1] = new ServicePointController(1,new Normal(10, 10), eventList, EventType.DEP2);
 			servicePoints[2] = new ServicePointController(1,new Normal(5, 3), eventList, EventType.DEP3);
             servicePoints[3] = new ServicePointController(1,new Normal(5, 3), eventList, EventType.DEP4);
             servicePoints[4] = new ServicePointController(1,new Normal(5, 3), eventList, EventType.DEP5);
 
+			*/
 			arrivalProcess = new ArrivalProcess(new Negexp(15, 5), eventList, EventType.ARR1);
 
+	}
+
+	public void generateServicePoints(int planners, int implementators, int testers, int reviewers, int presenters){
+		System.out.println(servicePoints[0]);
+		this.servicePoints[0] = new ServicePointController(planners,new Normal(10, 6), eventList, EventType.DEP1);
+		this.servicePoints[1] = new ServicePointController(implementators,new Normal(10, 10), eventList, EventType.DEP2);
+		this.servicePoints[2] = new ServicePointController(testers,new Normal(5, 3), eventList, EventType.DEP3);
+		this.servicePoints[3] = new ServicePointController(reviewers,new Normal(5, 3), eventList, EventType.DEP4);
+		this.servicePoints[4] = new ServicePointController(presenters,new Normal(5, 3), eventList, EventType.DEP5);
+		System.out.println(servicePoints[0]);
+		this.setSimulationTime(1000);
+		this.setDelay(500);
+		this.start();
+		//System.exit(0);
 	}
 
 	@Override

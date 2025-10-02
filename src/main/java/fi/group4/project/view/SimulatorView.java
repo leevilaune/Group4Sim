@@ -3,6 +3,7 @@ package fi.group4.project.view;
 import fi.group4.project.controller.SimulatorController;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
@@ -46,8 +47,7 @@ public class SimulatorView extends Application {
          */
         Scene scene = new Scene(pane,600,500);
         //pane.getChildren().add(d);
-        pane.getChildren().add(createCounterGrid());
-        stage.setScene(scene);
+        stage.setScene(createParameterScene(stage));
         stage.show();
         stage.setOnCloseRequest(event -> {
             //terminate();
@@ -99,6 +99,48 @@ public class SimulatorView extends Application {
         });
 
         return grid;
+    }
+
+    private Scene createParameterScene(Stage stage) {
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setStyle("-fx-padding: 20;");
+
+        Label title = new Label("Set Parameters (People Amounts)");
+        grid.add(title, 0, 0, 2, 1);
+
+        TextField[] fields = new TextField[5];
+        for (int i = 0; i < 5; i++) {
+            Label label = new Label("Parameter " + (i + 1) + ":");
+            TextField textField = new TextField();
+            textField.setPromptText("Enter number");
+            textField.setText("1");
+
+            fields[i] = textField;
+
+            grid.add(label, 0, i + 1);
+            grid.add(textField, 1, i + 1);
+        }
+
+        Button confirmBtn = new Button("Confirm");
+        confirmBtn.setOnAction(e -> {
+            int[] params = new int[5];
+            for (int i = 0; i < 5; i++) {
+                try {
+                    params[i] = Integer.parseInt(fields[i].getText());
+                    System.out.println(params[i]);
+                } catch (NumberFormatException ex) {
+                    params[i] = 0;
+                }
+            }
+            System.out.println(params[0]);
+            this.controller.setParameters(params[0],params[1],params[2],params[3],params[4]);
+            stage.setScene(new Scene(createCounterGrid(), 600, 500));
+        });
+
+        grid.add(confirmBtn, 0, 6, 2, 1);
+        return new Scene(grid, 400, 300);
     }
 
     public void updateCounters(ServicePointController[] servicePointControllers){

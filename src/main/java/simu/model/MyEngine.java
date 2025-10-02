@@ -172,5 +172,4 @@ public class MyEngine extends Engine{
 		System.out.println("Simulation ended at " + Clock.getInstance().getClock());
 		System.out.println("Results ... are currently missing");
 	}
-
 }

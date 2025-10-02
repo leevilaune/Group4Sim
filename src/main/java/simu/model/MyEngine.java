@@ -22,8 +22,9 @@ import java.util.Random;
 public class MyEngine extends Engine{
 	private ArrivalProcess arrivalProcess;
 	private ServicePointController[] servicePoints;
-	public SimulatorController controller;
-
+	private SimulatorController controller;
+	private long seed;
+	private ContinuousGenerator generator;
 
 	/**
 	 * Service Points and random number generator with different distributions are created here.
@@ -44,17 +45,30 @@ public class MyEngine extends Engine{
             servicePoints[4] = new ServicePointController(1,new Normal(5, 3), eventList, EventType.DEP5);
 
 			*/
-			arrivalProcess = new ArrivalProcess(new Negexp(15, 5), eventList, EventType.ARR1);
+			//arrivalProcess = new ArrivalProcess(new Negexp(15, 5), eventList, EventType.ARR1);
 
 	}
 
-	public void generateServicePoints(int planners, int implementators, int testers, int reviewers, int presenters){
+	public void generateServicePoints(int planners,
+									  int implementators,
+									  int testers,
+									  int reviewers,
+									  int presenters,
+									  long seed)
+	{
+		long realSeed = (seed == 0L) ? 1L : seed;
+		System.out.println("Using seed: " + realSeed);
+		this.seed = realSeed;
 		System.out.println(servicePoints[0]);
-		this.servicePoints[0] = new ServicePointController(planners,new Normal(10, 6), eventList, EventType.DEP1);
-		this.servicePoints[1] = new ServicePointController(implementators,new Normal(10, 10), eventList, EventType.DEP2);
-		this.servicePoints[2] = new ServicePointController(testers,new Normal(5, 3), eventList, EventType.DEP3);
-		this.servicePoints[3] = new ServicePointController(reviewers,new Normal(5, 3), eventList, EventType.DEP4);
-		this.servicePoints[4] = new ServicePointController(presenters,new Normal(5, 3), eventList, EventType.DEP5);
+		this.generator = new Uniform(0,1,realSeed);
+
+		this.servicePoints[0] = new ServicePointController(planners,new Normal(10, 6,realSeed), eventList, EventType.DEP1);
+		this.servicePoints[1] = new ServicePointController(implementators,new Normal(10, 10,realSeed), eventList, EventType.DEP2);
+		this.servicePoints[2] = new ServicePointController(testers,new Normal(5, 3,realSeed), eventList, EventType.DEP3);
+		this.servicePoints[3] = new ServicePointController(reviewers,new Normal(5, 3,realSeed), eventList, EventType.DEP4);
+		this.servicePoints[4] = new ServicePointController(presenters,new Normal(5, 3,realSeed), eventList, EventType.DEP5);
+		arrivalProcess = new ArrivalProcess(new Negexp(15, realSeed), eventList, EventType.ARR1);
+
 		System.out.println(servicePoints[0]);
 		this.setSimulationTime(1000);
 		this.setDelay(500);
@@ -70,10 +84,11 @@ public class MyEngine extends Engine{
 	@Override
 	protected void runEvent(Event t) {  // B phase events
 		Customer a;
-
+		double r = this.generator.sample();
+		Trace.out(Trace.Level.INFO,String.valueOf(r),"samples2.txt");
 		switch ((EventType)t.getType()) {
 		case ARR1:
-            a = new Customer((int) (Math.random()*3));
+            a = new Customer((int) (1+r));
 			servicePoints[0].addQueue(a);
 
 			arrivalProcess.generateNextEvent();
@@ -88,7 +103,7 @@ public class MyEngine extends Engine{
 		case DEP2:
 			a = servicePoints[1].removeQueue();
 
-            if(Math.random() < 0.6) {
+            if(r < 0.6) {
                 //continues normally
                 servicePoints[2].addQueue(a);
             }else{
@@ -107,7 +122,7 @@ public class MyEngine extends Engine{
         case DEP4:
             a = servicePoints[3].removeQueue();
 
-            if(Math.random() < 0.6) {
+            if(r < 0.6) {
                 //continues normally
                 servicePoints[4].addQueue(a);
             }else{
@@ -118,7 +133,7 @@ public class MyEngine extends Engine{
 
         case DEP5:
             a = servicePoints[4].removeQueue();
-            if(Math.random() < 0.5){
+            if(r < 0.5){
                 //not sure yet how we use internal and external presentation in simulation
                 //internal presentation
             }else{
@@ -172,5 +187,4 @@ public class MyEngine extends Engine{
 		System.out.println("Simulation ended at " + Clock.getInstance().getClock());
 		System.out.println("Results ... are currently missing");
 	}
-
 }

@@ -3,6 +3,7 @@ package fi.group4.project.controller;
 import fi.group4.project.view.BallThread;
 import fi.group4.project.view.SimulatorView;
 import simu.framework.Engine;
+import simu.framework.Trace;
 import simu.model.MyEngine;
 import simu.model.ServicePoint;
 import simu.model.ServicePointController;
@@ -17,9 +18,6 @@ public class SimulatorController implements IControllerVtoM, IControllerMtoV{
 
     public SimulatorController(SimulatorView view){
         this.engine = new MyEngine(this);
-        this.engine.setSimulationTime(1000);
-        this.engine.start();
-        this.engine.setDelay(1000);
         this.view = view;
     }
 
@@ -30,12 +28,15 @@ public class SimulatorController implements IControllerVtoM, IControllerMtoV{
 
     @Override
     public void visualiseCustomer() {
-
     }
 
     @Override
     public void startSimulation() {
-
+        this.engine = new MyEngine(this);
+        this.engine.setSimulationTime(1000);
+        Trace.out(Trace.Level.INFO,"SimulatorController.startSimulation(): "+this.engine.getServicePoints()[0]);
+        this.engine.start();
+        this.engine.setDelay(1000);
     }
 
     public void setSpeed(double delay){
@@ -59,5 +60,9 @@ public class SimulatorController implements IControllerVtoM, IControllerMtoV{
 
     public void terminate(){
         this.view.terminate();
+    }
+
+    public void setParameters(int param1, int param2, int param3, int param4, int param5){
+        this.engine.generateServicePoints(param1,param2,param3,param4,param5);
     }
 }

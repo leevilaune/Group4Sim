@@ -33,6 +33,7 @@ public class SimulatorView extends Application {
     @Override
     public void start(Stage stage) {
         Pane pane = new FlowPane();
+        /*
         this.d = new Display(600,200, Color.BLANCHEDALMOND);
         d.setX(500);
         d.setY(300);
@@ -41,13 +42,15 @@ public class SimulatorView extends Application {
         d.addBall(30,50,4,Color.BLANCHEDALMOND);
         d.addBall(500,300,2,Color.AZURE);
 
+
+         */
         Scene scene = new Scene(pane,600,500);
-        pane.getChildren().add(d);
+        //pane.getChildren().add(d);
         pane.getChildren().add(createCounterGrid());
         stage.setScene(scene);
         stage.show();
         stage.setOnCloseRequest(event -> {
-            terminate();
+            //terminate();
             System.exit(0);
         });
     }
@@ -68,7 +71,8 @@ public class SimulatorView extends Application {
             Label label = new Label(s.name());
             TextField queueField = new TextField();
             TextField reservedField = new TextField();
-
+            queueField.setEditable(false);
+            reservedField.setEditable(false);
             this.queueCounters.putIfAbsent(s, queueField);
             this.reservedCounters.putIfAbsent(s, reservedField);
 

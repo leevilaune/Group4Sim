@@ -122,7 +122,6 @@ public class MyEngine extends Engine{
 		Arrays.stream(servicePoints).forEach(ServicePointController::printQueues);
 		for (ServicePointController p: servicePoints){
 			Trace.out(Trace.Level.INFO, "Controller reserved? " + p.isReserved() + ", onQueue? " + p.isOnQueue());
-
 			if (!p.isReserved() && p.isOnQueue()){
 				p.beginService();
 
@@ -151,7 +150,6 @@ public class MyEngine extends Engine{
 		this.controller.updateCounters(this.servicePoints);
 
 	}
-
 
 	@Override
 	protected void results() {

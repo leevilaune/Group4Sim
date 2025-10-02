@@ -3,6 +3,8 @@ package simu.model;
 import eduni.distributions.ContinuousGenerator;
 import simu.framework.*;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.PriorityQueue;
 
 /**
  * Service Point implements the functionalities, calculations and reporting.
@@ -18,15 +20,18 @@ import java.util.LinkedList;
  *
  * Service point collects measurement parameters.
  */
-public class ServicePoint {
-	private LinkedList<Task> queue = new LinkedList<>(); // Data Structure used
+public class ServicePoint implements Comparable<ServicePoint>{
+	private PriorityQueue<Customer> queue = new PriorityQueue<>(); // Data Structure used
 	private ContinuousGenerator generator;
 	private EventList eventList;
 	private EventType eventTypeScheduled;
 	//Queuestrategy strategy; // option: ordering of the customer
 	private boolean reserved = false;
 
+    private double totalUsageTime = 0;
+    private double totalTaskServiced = 0;
 
+    private double totalWaitingTimeInSp = 0;
 	/**
 	 * Create the service point with a waiting queue.
 	 *
@@ -45,8 +50,9 @@ public class ServicePoint {
 	 *
 	 * @param a Customer to be queued
 	 */
-	public void addQueue(Task a) {	// The first customer of the queue is always in service
-		queue.add(a);
+	public void addQueue(Customer a) {	// The first customer of the queue is always in service
+        queue.add(a);
+        a.setResponseTimeVariable();
 	}
 
 	/**
@@ -55,9 +61,11 @@ public class ServicePoint {
 	 *
 	 * @return Customer retrieved from the waiting queue
 	 */
-	public Task removeQueue() {		// Remove serviced customer
+	public Customer removeQueue() {		// Remove serviced customer
 		reserved = false;
-		return queue.poll();
+        Customer ab = queue.poll();
+        totalWaitingTimeInSp += Clock.getInstance().getClock() - ab.getResponseTimeVariable();
+		return ab;
 	}
 
 	/**
@@ -66,20 +74,33 @@ public class ServicePoint {
 	 * Inserts a new event to the event list when the service should be ready.
 	 */
 	public void beginService() {		// Begins a new service, customer is on the queue during the service
-		Trace.out(Trace.Level.INFO, "Starting a new service for the task #" + queue.peek().getId());
+		Trace.out(Trace.Level.INFO, "Starting a new service for the customer #" + queue.peek().getId());
 		
 		reserved = true;
 
 		double serviceTime = generator.sample();
         // The average time spent in servicePoint is gotten from here with a simple getter or having some kind
         // of counter during the run of the program and collects the serviceTimes
+        totalUsageTime += serviceTime;
+        totalTaskServiced += 1;
+        // a way to add rollbacks is to add a probability here that chooses the eventType out of the possibilities
 
-        // all servicePoint statistics can be gotten from here by having some if else's based on eventType
 
-        // simplest way to add rollbacks is to add a probability here that chooses the eventType out of the possibilities
 
 		eventList.add(new Event(eventTypeScheduled, Clock.getInstance().getClock()+serviceTime));
 	}
+
+    public double getServicePointUtilization(){
+        //simulation time needs to be added as parameter (1000 is the default total simulation time)
+        return totalUsageTime/1000;
+    }
+    public double getServiceThroughput(){
+        //simulation time needs to be added as parameter(1000 is the default total simulation time)
+        return totalTaskServiced/1000;
+    }
+    public double getAverageServiceTime(){
+        return totalUsageTime/totalTaskServiced;
+    }
 
 	/**
 	 * Check whether the service point is busy
@@ -97,5 +118,74 @@ public class ServicePoint {
 	 */
 	public boolean isOnQueue(){
 		return queue.size() != 0;
+	}
+
+	@Override
+	public int compareTo(ServicePoint o) {
+        return Double.compare(o.queue.peek().getArrivalTime(), this.queue.peek().getArrivalTime());
+	}
+
+	public PriorityQueue<Customer> getQueue() {
+		return queue;
+	}
+
+	public void setQueue(PriorityQueue<Customer> queue) {
+		this.queue = queue;
+	}
+
+	public ContinuousGenerator getGenerator() {
+		return generator;
+	}
+
+	public void setGenerator(ContinuousGenerator generator) {
+		this.generator = generator;
+	}
+
+	public EventList getEventList() {
+		return eventList;
+	}
+
+	public void setEventList(EventList eventList) {
+		this.eventList = eventList;
+	}
+
+	public EventType getEventTypeScheduled() {
+		return eventTypeScheduled;
+	}
+
+	public void setEventTypeScheduled(EventType eventTypeScheduled) {
+		this.eventTypeScheduled = eventTypeScheduled;
+	}
+
+	public void setReserved(boolean reserved) {
+		this.reserved = reserved;
+	}
+
+    public double getTotalUsageTime() {
+        return totalUsageTime;
+    }
+
+    public double getTotalTaskServiced() {
+        return totalTaskServiced;
+    }
+
+    public double getTotalWaitingTimeInSp(){
+        return totalWaitingTimeInSp;
+    }
+
+	public List<String> getCustomerIDs(){
+		return queue.stream()
+				.map(Customer::toString)
+				.toList();
+	}
+
+	@Override
+	public String toString() {
+		return "ServicePoint{" +
+				"queue=" + queue +
+				", eventList=" + eventList +
+				", eventTypeScheduled=" + eventTypeScheduled +
+				", reserved=" + reserved +
+				'}';
 	}
 }

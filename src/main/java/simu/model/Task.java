@@ -7,23 +7,35 @@ import simu.framework.*;
  *
  * TODO: This is to be implemented according to the requirements of the simulation model (data!)
  */
-public class Task {
+public class Customer implements Comparable<Customer> {
 	private double arrivalTime;
 	private double removalTime;
 	private int id;
 	private static int i = 1;
 	private static long sum = 0;
+	private int priority;
+
+    private double responseTimeVariable = 0;
+
 
 	/**
 	 * Create a unique customer
 	 */
-	public Task() {
+	public Customer(int priority) {
+		this.priority = priority;
+
 	    id = i++;
 	    
 		arrivalTime = Clock.getInstance().getClock();
-		Trace.out(Trace.Level.INFO, "New task #" + id + " arrived at  " + arrivalTime);
+		Trace.out(Trace.Level.INFO, "New customer #" + id + " arrived at  " + arrivalTime);
 	}
 
+    public void setResponseTimeVariable(){
+        responseTimeVariable = Clock.getInstance().getClock();
+    }
+    public double getResponseTimeVariable(){
+        return responseTimeVariable;
+    }
 	/**
 	 * Give the time when customer has been removed (from the system to be simulated)
 	 * @return Customer removal time
@@ -68,13 +80,35 @@ public class Task {
 	 * Report the measured variables of the customer. In this case to the diagnostic output.
 	 */
 	public void reportResults() {
-		Trace.out(Trace.Level.INFO, "\nTask " + id + " ready! ");
-		Trace.out(Trace.Level.INFO, "Task "   + id + " arrived: " + arrivalTime);
-		Trace.out(Trace.Level.INFO,"Task "    + id + " removed: " + removalTime);
-		Trace.out(Trace.Level.INFO,"Task "    + id + " stayed: "  + (removalTime - arrivalTime));
+		Trace.out(Trace.Level.INFO, "\nCustomer " + id + " ready! ");
+		Trace.out(Trace.Level.INFO, "Customer "   + id + " arrived: " + arrivalTime);
+		Trace.out(Trace.Level.INFO,"Customer "    + id + " removed: " + removalTime);
+		Trace.out(Trace.Level.INFO,"Customer "    + id + " stayed: "  + (removalTime - arrivalTime));
 
 		sum += (removalTime - arrivalTime);
 		double mean = sum/id;
-		System.out.println("Current mean of the task service times " + mean);
+		System.out.println("Current mean of the customer service times " + mean);
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+
+	@Override
+	public String toString() {
+		return String.valueOf(this.id +":"+this.priority );
+	}
+
+	@Override
+	public int compareTo(Customer o) {
+		return this.priority-o.getPriority();
 	}
 }

@@ -80,6 +80,7 @@ public class ServicePoint implements Comparable<ServicePoint>{
 		reserved = true;
 
 		double serviceTime = generator.sample();
+		System.out.println("Service time ="+ serviceTime);
         // The average time spent in servicePoint is gotten from here with a simple getter or having some kind
         // of counter during the run of the program and collects the serviceTimes
         totalUsageTime += serviceTime;

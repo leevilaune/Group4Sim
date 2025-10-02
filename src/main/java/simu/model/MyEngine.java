@@ -102,6 +102,7 @@ public class MyEngine extends Engine{
 
         case DEP5:
             a = servicePoints[4].removeQueue();
+
             if(Math.random() < 0.5){
                 //not sure yet how we use internal and external presentation in simulation
                 //internal presentation

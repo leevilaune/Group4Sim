@@ -31,6 +31,7 @@ public class ServicePoint implements Comparable<ServicePoint>{
     private double totalUsageTime = 0;
     private double totalTaskServiced = 0;
 
+    //wating time includes service time
     private double totalWaitingTimeInSp = 0;
 	/**
 	 * Create the service point with a waiting queue.
@@ -169,6 +170,7 @@ public class ServicePoint implements Comparable<ServicePoint>{
         return totalTaskServiced;
     }
 
+    //wating time includes service time
     public double getTotalWaitingTimeInSp(){
         return totalWaitingTimeInSp;
     }

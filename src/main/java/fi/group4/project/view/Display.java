@@ -132,4 +132,8 @@ public class Display extends Canvas {
     public void setY(int y) {
         this.y = y;
     }
+
+    public List<BallThread> getBalls() {
+        return balls;
+    }
 }

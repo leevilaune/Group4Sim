@@ -20,6 +20,7 @@ import java.util.HashMap;
 public class SimulatorView extends Application {
 
     private SimulatorController controller;
+    private Display d;
 
     private HashMap<EventType, TextField> queueCounters;
     private HashMap<EventType, TextField> reservedCounters;
@@ -32,7 +33,7 @@ public class SimulatorView extends Application {
     @Override
     public void start(Stage stage) {
         Pane pane = new FlowPane();
-        Display d = new Display(600,200, Color.BLANCHEDALMOND);
+        this.d = new Display(600,200, Color.BLANCHEDALMOND);
         d.setX(500);
         d.setY(300);
         d.drawBall();
@@ -45,6 +46,10 @@ public class SimulatorView extends Application {
         pane.getChildren().add(createCounterGrid());
         stage.setScene(scene);
         stage.show();
+        stage.setOnCloseRequest(event -> {
+            terminate();
+            System.exit(0);
+        });
     }
 
     private GridPane createCounterGrid() {
@@ -101,5 +106,9 @@ public class SimulatorView extends Application {
             this.reservedCounters.get(servicePointController.getType())
                     .setText(String.valueOf(servicePointController.reservedAmount()));
         });
+    }
+
+    public void terminate(){
+        this.d.getBalls().forEach(b -> b.setRunning(false));
     }
 }

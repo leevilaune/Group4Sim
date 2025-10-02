@@ -41,7 +41,7 @@ public abstract class Engine extends Thread {
 			tryCEvents();
 			this.updateCounters();
 		}
-
+		this.controller.terminate();
 		results();
 	}
 

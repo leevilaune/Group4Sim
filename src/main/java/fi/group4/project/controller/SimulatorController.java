@@ -1,5 +1,6 @@
 package fi.group4.project.controller;
 
+import fi.group4.project.view.BallThread;
 import fi.group4.project.view.SimulatorView;
 import simu.framework.Engine;
 import simu.model.MyEngine;
@@ -7,6 +8,7 @@ import simu.model.ServicePoint;
 import simu.model.ServicePointController;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class SimulatorController implements IControllerVtoM, IControllerMtoV{
 
@@ -53,5 +55,9 @@ public class SimulatorController implements IControllerVtoM, IControllerMtoV{
     public void updateCounters(ServicePointController[] servicePointControllers){
         Arrays.stream(servicePointControllers).forEach(System.out::println);
         this.view.updateCounters(servicePointControllers);
+    }
+
+    public void terminate(){
+        this.view.terminate();
     }
 }

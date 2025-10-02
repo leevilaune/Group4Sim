@@ -19,7 +19,7 @@ public class Simulator {
 		Trace.setTraceLevel(Level.INFO);
 
 		MyEngine m = new MyEngine(null);
-		m.generateServicePoints(1,1,1,1,1);
+		m.generateServicePoints(1,1,1,1,1,1);
 		m.start();
 		m.join();
 	}

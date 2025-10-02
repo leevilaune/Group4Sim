@@ -2,6 +2,7 @@ package fi.group4.project.view;
 
 import fi.group4.project.controller.SimulatorController;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -12,6 +13,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import simu.framework.Clock;
 import simu.model.EventType;
 import simu.model.ServicePointController;
 
@@ -25,6 +27,7 @@ public class SimulatorView extends Application {
 
     private HashMap<EventType, TextField> queueCounters;
     private HashMap<EventType, TextField> reservedCounters;
+    private Label timeLabel;
 
     public SimulatorView(){
         this.controller = new SimulatorController(this);
@@ -64,6 +67,7 @@ public class SimulatorView extends Application {
 
         this.queueCounters = new HashMap<>();
         this.reservedCounters = new HashMap<>();
+        this.timeLabel = new Label("Time:");
 
         EventType[] labels = {EventType.ARR1, EventType.DEP1, EventType.DEP2, EventType.DEP3,EventType.DEP4,EventType.DEP5};
         int i = 1;
@@ -83,8 +87,7 @@ public class SimulatorView extends Application {
         }
 
         Label sliderLabel = new Label("Speed:");
-        //gui breaks if going too low, dont worry about it?
-        Slider slider = new Slider(200, 1000, this.controller.getDelay());
+        Slider slider = new Slider(0, 1000, this.controller.getDelay());
         slider.setShowTickMarks(true);
         slider.setShowTickLabels(true);
         slider.setMajorTickUnit(25);
@@ -93,13 +96,14 @@ public class SimulatorView extends Application {
 
         Button showStats = new Button("Stats");
         showStats.setOnAction(e -> {
-            stage.setScene(createStatisticsScene(stage));
+            Platform.runLater(() -> stage.setScene(createStatisticsScene(stage)));
         });
 
         int sliderRow = i;
         grid.add(sliderLabel, 0, sliderRow);
         grid.add(slider, 1, sliderRow, 2, 1);
         grid.add(showStats,1,8);
+        grid.add(timeLabel,2,8);
         slider.valueProperty().addListener((observable, oldValue, newValue) -> {
             this.controller.setSpeed(slider.getValue());
         });
@@ -119,8 +123,8 @@ public class SimulatorView extends Application {
         Label title = new Label("Set Parameters (People Amounts)");
         grid.add(title, 0, 0, 2, 1);
 
-        TextField[] fields = new TextField[5];
-        for (int i = 0; i < 5; i++) {
+        TextField[] fields = new TextField[6];
+        for (int i = 0; i < 6; i++) {
             Label label = new Label("Parameter " + (i + 1) + ":");
             TextField textField = new TextField();
             textField.setPromptText("Enter number");
@@ -141,7 +145,7 @@ public class SimulatorView extends Application {
     private Button getConfirmBtn(Stage stage, TextField[] fields) {
         Button confirmBtn = new Button("Confirm");
         confirmBtn.setOnAction(e -> {
-            int[] params = new int[5];
+            int[] params = new int[6];
             for (int i = 0; i < 5; i++) {
                 try {
                     params[i] = Integer.parseInt(fields[i].getText());
@@ -151,8 +155,8 @@ public class SimulatorView extends Application {
                 }
             }
             System.out.println(params[0]);
-            this.controller.setParameters(params[0],params[1],params[2],params[3],params[4]);
-            stage.setScene(createCounterGrid(stage));
+            this.controller.setParameters(params[0],params[1],params[2],params[3],params[4],params[5]);
+            Platform.runLater(() -> stage.setScene(createCounterGrid(stage)));
         });
         return confirmBtn;
     }
@@ -161,6 +165,7 @@ public class SimulatorView extends Application {
         this.controller.terminate();
         Button b = new Button("Rerun");
         b.setOnAction(e -> {
+
            stage.setScene(this.createParameterScene(stage));
         });
         return b;
@@ -191,10 +196,10 @@ public class SimulatorView extends Application {
 
         Button goBack = new Button("Back");
         goBack.setOnAction(e->{
-            stage.setScene(createCounterGrid(stage));
+            Platform.runLater(() -> stage.setScene(createCounterGrid(stage)));
         });
 
-        grid.add(goBack,1,this.controller.getServicePointControllers().length+1);
+        grid.add(goBack,1,row);
         //grid.add(getRerunButton(stage),2,this.controller.getServicePointControllers().length+1);
 
         return new Scene(grid, 600, 400);
@@ -209,9 +214,8 @@ public class SimulatorView extends Application {
             this.reservedCounters.get(servicePointController.getType())
                     .setText(String.valueOf(servicePointController.reservedAmount()));
         });
+        this.timeLabel.setText("Time: " +Clock.getInstance().getClock());
     }
-
-
 
     public void terminate(){
         this.d.getBalls().forEach(b -> b.setRunning(false));

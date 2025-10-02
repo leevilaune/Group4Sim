@@ -138,7 +138,7 @@ public class SimulatorView extends Application {
 
         Button confirmBtn = getConfirmBtn(stage, fields);
 
-        grid.add(confirmBtn, 0, 6, 2, 1);
+        grid.add(confirmBtn, 0, 7, 2, 1);
         return new Scene(grid, 400, 300);
     }
 

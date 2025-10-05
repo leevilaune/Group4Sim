@@ -1,6 +1,7 @@
 package simu.model;
 
 import eduni.distributions.ContinuousGenerator;
+import simu.framework.Clock;
 import simu.framework.EventList;
 import simu.framework.Trace;
 
@@ -110,7 +111,7 @@ public class ServicePointController {
         for (ServicePoint sp : this.servicePoints){
             totalWaitTimeInSp += sp.getTotalWaitingTimeInSp();
         }
-        return totalWaitTimeInSp/1000;
+        return totalWaitTimeInSp/ Clock.getInstance().getClock();
     }
 
 }

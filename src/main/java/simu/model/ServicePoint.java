@@ -94,11 +94,11 @@ public class ServicePoint implements Comparable<ServicePoint>{
 
     public double getServicePointUtilization(){
         //simulation time needs to be added as parameter (1000 is the default total simulation time)
-        return totalUsageTime/1000;
+        return totalUsageTime/Clock.getInstance().getClock();
     }
     public double getServiceThroughput(){
         //simulation time needs to be added as parameter(1000 is the default total simulation time)
-        return totalTaskServiced/1000;
+        return totalTaskServiced/Clock.getInstance().getClock();
     }
     public double getAverageServiceTime(){
         return totalUsageTime/totalTaskServiced;

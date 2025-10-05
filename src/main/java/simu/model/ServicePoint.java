@@ -31,6 +31,7 @@ public class ServicePoint implements Comparable<ServicePoint>{
     private double totalUsageTime = 0;
     private double totalTaskServiced = 0;
 
+    //wating time includes service time
     private double totalWaitingTimeInSp = 0;
 	/**
 	 * Create the service point with a waiting queue.
@@ -79,6 +80,7 @@ public class ServicePoint implements Comparable<ServicePoint>{
 		reserved = true;
 
 		double serviceTime = generator.sample();
+		System.out.println("Service time ="+ serviceTime);
         // The average time spent in servicePoint is gotten from here with a simple getter or having some kind
         // of counter during the run of the program and collects the serviceTimes
         totalUsageTime += serviceTime;
@@ -92,11 +94,11 @@ public class ServicePoint implements Comparable<ServicePoint>{
 
     public double getServicePointUtilization(){
         //simulation time needs to be added as parameter (1000 is the default total simulation time)
-        return totalUsageTime/1000;
+        return totalUsageTime/Clock.getInstance().getClock();
     }
     public double getServiceThroughput(){
         //simulation time needs to be added as parameter(1000 is the default total simulation time)
-        return totalTaskServiced/1000;
+        return totalTaskServiced/Clock.getInstance().getClock();
     }
     public double getAverageServiceTime(){
         return totalUsageTime/totalTaskServiced;
@@ -169,6 +171,7 @@ public class ServicePoint implements Comparable<ServicePoint>{
         return totalTaskServiced;
     }
 
+    //wating time includes service time
     public double getTotalWaitingTimeInSp(){
         return totalWaitingTimeInSp;
     }

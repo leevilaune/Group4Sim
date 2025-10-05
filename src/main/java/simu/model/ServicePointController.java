@@ -1,6 +1,7 @@
 package simu.model;
 
 import eduni.distributions.ContinuousGenerator;
+import simu.framework.Clock;
 import simu.framework.EventList;
 import simu.framework.Trace;
 
@@ -87,6 +88,8 @@ public class ServicePointController {
         return "SPController"+this.servicePoints[0].getEventTypeScheduled()+"{" +
                 "reserved=" + this.reservedAmount() +
                 ", points" + Arrays.toString(this.servicePoints) +
+                ", pointsAmount" + this.servicePoints.length +
+
                 '}';
     }
 
@@ -103,12 +106,16 @@ public class ServicePointController {
     }
 
     public double getAverageQueLenghtAtSp(){
-        //needs total simulationtime as parameter (by default 1000)
+
         double totalWaitTimeInSp = 0;
         for (ServicePoint sp : this.servicePoints){
             totalWaitTimeInSp += sp.getTotalWaitingTimeInSp();
         }
-        return totalWaitTimeInSp/1000;
+        return totalWaitTimeInSp/ Clock.getInstance().getClock();
+    }
+
+    public ServicePoint[] getServicePoints(){
+        return this.servicePoints;
     }
 
 }

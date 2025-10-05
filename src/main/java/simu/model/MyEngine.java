@@ -22,8 +22,9 @@ import java.util.Random;
 public class MyEngine extends Engine{
 	private ArrivalProcess arrivalProcess;
 	private ServicePointController[] servicePoints;
-	public SimulatorController controller;
-
+	private SimulatorController controller;
+	private long seed;
+	private ContinuousGenerator generator;
 
 	/**
 	 * Service Points and random number generator with different distributions are created here.
@@ -34,16 +35,45 @@ public class MyEngine extends Engine{
 		super(controller);
 		servicePoints = new ServicePointController[5];
 		this.controller = controller;
-
 			/* more realistic simulation case with variable customer arrival times and service times */
+			/*
+
 			servicePoints[0] = new ServicePointController(1,new Normal(10, 6), eventList, EventType.DEP1);
 			servicePoints[1] = new ServicePointController(1,new Normal(10, 10), eventList, EventType.DEP2);
 			servicePoints[2] = new ServicePointController(1,new Normal(5, 3), eventList, EventType.DEP3);
             servicePoints[3] = new ServicePointController(1,new Normal(5, 3), eventList, EventType.DEP4);
             servicePoints[4] = new ServicePointController(1,new Normal(5, 3), eventList, EventType.DEP5);
 
-			arrivalProcess = new ArrivalProcess(new Negexp(15, 5), eventList, EventType.ARR1);
+			*/
+			//arrivalProcess = new ArrivalProcess(new Negexp(15, 5), eventList, EventType.ARR1);
 
+	}
+
+	public void generateServicePoints(int planners,
+									  int implementators,
+									  int testers,
+									  int reviewers,
+									  int presenters,
+									  long seed)
+	{
+		long realSeed = (seed == 0L) ? 1L : seed;
+		System.out.println("Using seed: " + realSeed);
+		this.seed = realSeed;
+		System.out.println(servicePoints[0]);
+		this.generator = new Uniform(0,1,realSeed);
+
+		this.servicePoints[0] = new ServicePointController(planners,new Normal(10, 6,realSeed), eventList, EventType.PLANNING);
+		this.servicePoints[1] = new ServicePointController(implementators,new Normal(10, 10,realSeed), eventList, EventType.IMPLEMENTATION);
+		this.servicePoints[2] = new ServicePointController(testers,new Normal(5, 3,realSeed), eventList, EventType.TESTING);
+		this.servicePoints[3] = new ServicePointController(reviewers,new Normal(5, 3,realSeed), eventList, EventType.REVIEW);
+		this.servicePoints[4] = new ServicePointController(presenters,new Normal(5, 3,realSeed), eventList, EventType.PRESENTATION);
+		arrivalProcess = new ArrivalProcess(new Negexp(15, realSeed), eventList, EventType.ARR1);
+
+		System.out.println(servicePoints[0]);
+		this.setSimulationTime(1000);
+		this.setDelay(500);
+		this.start();
+		//System.exit(0);
 	}
 
 	@Override
@@ -54,25 +84,26 @@ public class MyEngine extends Engine{
 	@Override
 	protected void runEvent(Event t) {  // B phase events
 		Customer a;
-
+		double r = this.generator.sample();
+		Trace.out(Trace.Level.INFO,String.valueOf(r),"samples2.txt");
 		switch ((EventType)t.getType()) {
 		case ARR1:
-            a = new Customer((int) (Math.random()*3));
+            a = new Customer((int) (1+r));
 			servicePoints[0].addQueue(a);
 
 			arrivalProcess.generateNextEvent();
 			break;
 
-		case DEP1:
+		case PLANNING:
 			a = servicePoints[0].removeQueue();
 
             servicePoints[1].addQueue(a);
 			break;
 
-		case DEP2:
+		case IMPLEMENTATION:
 			a = servicePoints[1].removeQueue();
 
-            if(Math.random() < 0.6) {
+            if(r < 0.6) {
                 //continues normally
                 servicePoints[2].addQueue(a);
             }else{
@@ -81,17 +112,17 @@ public class MyEngine extends Engine{
             }
 			break;
 
-		case DEP3:
+		case TESTING:
 			a = servicePoints[2].removeQueue();
 
             servicePoints[3].addQueue(a);
 
 			break;
 
-        case DEP4:
+        case REVIEW:
             a = servicePoints[3].removeQueue();
 
-            if(Math.random() < 0.6) {
+            if(r < 0.6) {
                 //continues normally
                 servicePoints[4].addQueue(a);
             }else{
@@ -100,9 +131,9 @@ public class MyEngine extends Engine{
             }
             break;
 
-        case DEP5:
+        case PRESENTATION:
             a = servicePoints[4].removeQueue();
-            if(Math.random() < 0.5){
+            if(r < 0.5){
                 //not sure yet how we use internal and external presentation in simulation
                 //internal presentation
             }else{
@@ -122,7 +153,6 @@ public class MyEngine extends Engine{
 		Arrays.stream(servicePoints).forEach(ServicePointController::printQueues);
 		for (ServicePointController p: servicePoints){
 			Trace.out(Trace.Level.INFO, "Controller reserved? " + p.isReserved() + ", onQueue? " + p.isOnQueue());
-
 			if (!p.isReserved() && p.isOnQueue()){
 				p.beginService();
 
@@ -152,11 +182,9 @@ public class MyEngine extends Engine{
 
 	}
 
-
 	@Override
 	protected void results() {
 		System.out.println("Simulation ended at " + Clock.getInstance().getClock());
 		System.out.println("Results ... are currently missing");
 	}
-
 }

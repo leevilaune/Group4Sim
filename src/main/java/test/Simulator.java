@@ -15,11 +15,12 @@ import simu.model.MyEngine;
  * With setTraceLevel() you can control the number of diagnostic messages printed to the console.
  */
 public class Simulator {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		Trace.setTraceLevel(Level.INFO);
 
-		Engine m = new MyEngine(null);
-		m.setSimulationTime(1000);
-		m.run();
+		MyEngine m = new MyEngine(null);
+		m.generateServicePoints(1,1,1,1,1,1);
+		m.start();
+		m.join();
 	}
 }

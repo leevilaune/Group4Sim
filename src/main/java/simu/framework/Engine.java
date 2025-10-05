@@ -21,6 +21,9 @@ public abstract class Engine extends Thread {
 	public void setSimulationTime(double time) {
 		simulationTime = time;
 	}
+	public double getSimulationTime(){
+		return this.simulationTime;
+	}
 
 	public void setDelay(long time) {
 		this.delay = time;
@@ -41,7 +44,6 @@ public abstract class Engine extends Thread {
 			tryCEvents();
 			this.updateCounters();
 		}
-
 		results();
 	}
 

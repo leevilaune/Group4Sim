@@ -62,11 +62,11 @@ public class MyEngine extends Engine{
 		System.out.println(servicePoints[0]);
 		this.generator = new Uniform(0,1,realSeed);
 
-		this.servicePoints[0] = new ServicePointController(planners,new Normal(10, 6,realSeed), eventList, EventType.DEP1);
-		this.servicePoints[1] = new ServicePointController(implementators,new Normal(10, 10,realSeed), eventList, EventType.DEP2);
-		this.servicePoints[2] = new ServicePointController(testers,new Normal(5, 3,realSeed), eventList, EventType.DEP3);
-		this.servicePoints[3] = new ServicePointController(reviewers,new Normal(5, 3,realSeed), eventList, EventType.DEP4);
-		this.servicePoints[4] = new ServicePointController(presenters,new Normal(5, 3,realSeed), eventList, EventType.DEP5);
+		this.servicePoints[0] = new ServicePointController(planners,new Normal(10, 6,realSeed), eventList, EventType.PLANNING);
+		this.servicePoints[1] = new ServicePointController(implementators,new Normal(10, 10,realSeed), eventList, EventType.IMPLEMENTATION);
+		this.servicePoints[2] = new ServicePointController(testers,new Normal(5, 3,realSeed), eventList, EventType.TESTING);
+		this.servicePoints[3] = new ServicePointController(reviewers,new Normal(5, 3,realSeed), eventList, EventType.REVIEW);
+		this.servicePoints[4] = new ServicePointController(presenters,new Normal(5, 3,realSeed), eventList, EventType.PRESENTATION);
 		arrivalProcess = new ArrivalProcess(new Negexp(15, realSeed), eventList, EventType.ARR1);
 
 		System.out.println(servicePoints[0]);
@@ -94,13 +94,13 @@ public class MyEngine extends Engine{
 			arrivalProcess.generateNextEvent();
 			break;
 
-		case DEP1:
+		case PLANNING:
 			a = servicePoints[0].removeQueue();
 
             servicePoints[1].addQueue(a);
 			break;
 
-		case DEP2:
+		case IMPLEMENTATION:
 			a = servicePoints[1].removeQueue();
 
             if(r < 0.6) {
@@ -112,14 +112,14 @@ public class MyEngine extends Engine{
             }
 			break;
 
-		case DEP3:
+		case TESTING:
 			a = servicePoints[2].removeQueue();
 
             servicePoints[3].addQueue(a);
 
 			break;
 
-        case DEP4:
+        case REVIEW:
             a = servicePoints[3].removeQueue();
 
             if(r < 0.6) {
@@ -131,7 +131,7 @@ public class MyEngine extends Engine{
             }
             break;
 
-        case DEP5:
+        case PRESENTATION:
             a = servicePoints[4].removeQueue();
             if(r < 0.5){
                 //not sure yet how we use internal and external presentation in simulation

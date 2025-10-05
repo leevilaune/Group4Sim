@@ -68,8 +68,7 @@ public class SimulatorView extends Application {
         this.queueCounters = new HashMap<>();
         this.reservedCounters = new HashMap<>();
         this.timeLabel = new Label("Time:");
-
-        EventType[] labels = {EventType.ARR1, EventType.DEP1, EventType.DEP2, EventType.DEP3,EventType.DEP4,EventType.DEP5};
+        EventType[] labels = {EventType.ARR1, EventType.PLANNING, EventType.IMPLEMENTATION, EventType.TESTING,EventType.REVIEW,EventType.PRESENTATION};
         int i = 1;
         for (EventType s : labels) {
             Label label = new Label(s.name());
@@ -178,7 +177,7 @@ public class SimulatorView extends Application {
         grid.setHgap(20);
 
         grid.add(new Label("Service Point"), 0, 0);
-        grid.add(new Label("Avg Response Time"), 1, 0);
+        grid.add(new Label("Response Time"), 1, 0);
         grid.add(new Label("Avg Queue Length"), 2, 0);
 
         int row = 1;
@@ -192,6 +191,8 @@ public class SimulatorView extends Application {
             grid.add(queueLen, 2, row);
 
             row++;
+
+
         }
 
         Button goBack = new Button("Back");

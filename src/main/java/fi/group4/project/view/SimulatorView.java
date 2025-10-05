@@ -5,16 +5,14 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import simu.framework.Clock;
 import simu.model.EventType;
+import simu.model.ServicePoint;
 import simu.model.ServicePointController;
 
 import java.util.Arrays;
@@ -180,6 +178,9 @@ public class SimulatorView extends Application {
         grid.add(new Label("Response Time"), 1, 0);
         grid.add(new Label("Avg Queue Length"), 2, 0);
 
+
+
+
         int row = 1;
         for (ServicePointController spc : this.controller.getServicePointControllers()) {
             Label spLabel = new Label(spc.getType().toString());
@@ -192,8 +193,37 @@ public class SimulatorView extends Application {
 
             row++;
 
+        }
+
+        row++;
+
+        grid.add(new Label("Worker"), 0, row);
+        grid.add(new Label("Worker Utilization"), 1, row);
+        grid.add(new Label("Service Throughput"), 2, row);
+        grid.add(new Label("Avg ServiceTime"), 3, row);
+
+        row++;
+
+        for (ServicePointController spc : this.controller.getServicePointControllers()) {
+            int counter = 1;
+            for(ServicePoint sp: spc.getServicePoints()){
+                Label spWorkerLabel = new Label(spc.getType().toString() + " " + counter);
+                Label spWorkerUtulizationLabel = new Label(String.format("%.2f", sp.getServicePointUtilization()));
+                Label spServiceThroughput = new Label(String.format("%.2f", sp.getServiceThroughput()));
+                Label spServiceTime = new Label(String.format("%.2f", sp.getAverageServiceTime()));
+
+                grid.add(spWorkerLabel, 0, row);
+                grid.add(spWorkerUtulizationLabel, 1, row);
+                grid.add(spServiceThroughput, 2, row);
+                grid.add(spServiceTime, 3, row);
+
+                counter ++;
+                row++;
+            }
 
         }
+
+
 
         Button goBack = new Button("Back");
         goBack.setOnAction(e->{
@@ -202,8 +232,9 @@ public class SimulatorView extends Application {
 
         grid.add(goBack,1,row);
         //grid.add(getRerunButton(stage),2,this.controller.getServicePointControllers().length+1);
-
-        return new Scene(grid, 600, 400);
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(grid);
+        return new Scene(scrollPane, 600, 400);
     }
 
     public void updateCounters(ServicePointController[] servicePointControllers){

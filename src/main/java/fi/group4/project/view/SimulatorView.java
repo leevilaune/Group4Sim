@@ -27,6 +27,11 @@ public class SimulatorView extends Application {
     private HashMap<EventType, TextField> reservedCounters;
     private Label timeLabel;
 
+    private Label arriva = new Label("Arrivals: 0");
+    private Label external = new Label("External Presentation: 0");
+    private Label internal = new Label("Internal Presentation: 0");
+    private Label total = new Label("Total Presentation: 0");
+
     public SimulatorView(){
         this.controller = new SimulatorController(this);
     }
@@ -106,6 +111,13 @@ public class SimulatorView extends Application {
         });
 
         grid.add(getRerunButton(stage),3,8);
+
+
+
+        grid.add(arriva, 0, 9);
+        grid.add(external, 1, 9);
+        grid.add(internal, 2, 9);
+        grid.add(total, 3, 9);
 
 
         return new Scene(grid,600,500);
@@ -249,6 +261,13 @@ public class SimulatorView extends Application {
                     .setText(String.valueOf(servicePointController.reservedAmount()));
         });
         this.timeLabel.setText("Time: " +Clock.getInstance().getClock());
+
+        this.arriva.setText("Arrivals: " + controller.getArrivals());
+        this.external.setText("External Presentations: " + controller.getExpresentation());
+        this.internal.setText("Internal Presentations: " + controller.getInpresentation());
+        this.total.setText("Total Presentations: " + (controller.getExpresentation() + controller.getInpresentation()));
+
+
     }
 
     public void terminate(){

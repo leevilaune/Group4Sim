@@ -102,4 +102,15 @@ public class SimulatorController implements IControllerVtoM, IControllerMtoV{
     public double getDelay(){
         return this.engine.getDelay();
     }
+
+    public int getArrivals(){
+        return engine.getArrivals();
+    }
+    public int getExpresentation() {
+        return engine.getExpresentation();
+    }
+
+    public int getInpresentation() {
+        return engine.getInpresentation();
+    }
 }

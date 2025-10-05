@@ -26,6 +26,10 @@ public class MyEngine extends Engine{
 	private long seed;
 	private ContinuousGenerator generator;
 
+    private int arrivals = 0;
+    private int expresentation = 0;
+    private int inpresentation = 0;
+
 	/**
 	 * Service Points and random number generator with different distributions are created here.
 	 * We use exponent distribution for customer arrival times and normal distribution for the
@@ -90,6 +94,7 @@ public class MyEngine extends Engine{
 		case ARR1:
             a = new Customer((int) (1+r));
 			servicePoints[0].addQueue(a);
+            arrivals++;
 
 			arrivalProcess.generateNextEvent();
 			break;
@@ -134,10 +139,12 @@ public class MyEngine extends Engine{
         case PRESENTATION:
             a = servicePoints[4].removeQueue();
             if(r < 0.5){
+                inpresentation++;
                 //not sure yet how we use internal and external presentation in simulation
                 //internal presentation
             }else{
                 //external presentation
+                expresentation++;
             }
 
             a.setRemovalTime(Clock.getInstance().getClock());
@@ -187,4 +194,16 @@ public class MyEngine extends Engine{
 		System.out.println("Simulation ended at " + Clock.getInstance().getClock());
 		System.out.println("Results ... are currently missing");
 	}
+
+    public int getArrivals() {
+        return arrivals;
+    }
+
+    public int getExpresentation() {
+        return expresentation;
+    }
+
+    public int getInpresentation() {
+        return inpresentation;
+    }
 }

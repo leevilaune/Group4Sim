@@ -36,15 +36,17 @@ public class SimulatorController implements IControllerVtoM, IControllerMtoV{
 
     @Override
     public void startSimulation(int param1, int param2, int param3, int param4, int param5, long seed) {
-
+        /*
         if (simulationThread != null && simulationThread.isAlive()) {
-            engine.stop(); // You must have a volatile `running` flag in Engine
+            engine.stop();
             try {
                 simulationThread.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
         }
+        */
         this.engine = new MyEngine(this);
         this.engine.generateServicePoints(param1,param2,param3,param4,param5,seed);
 

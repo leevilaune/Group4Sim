@@ -72,7 +72,7 @@ public class MyEngine extends Engine{
 		System.out.println(servicePoints[0]);
 		this.setSimulationTime(1000);
 		this.setDelay(500);
-		this.start();
+		//this.start();
 		//System.exit(0);
 	}
 

@@ -191,4 +191,14 @@ public class ServicePoint implements Comparable<ServicePoint>{
 				", reserved=" + reserved +
 				'}';
 	}
+
+    public void reset() {
+        queue.clear();
+        reserved = false;
+        totalUsageTime = 0;
+        totalTaskServiced = 0;
+        totalWaitingTimeInSp = 0;
+    }
+
+
 }

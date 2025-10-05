@@ -118,4 +118,10 @@ public class ServicePointController {
         return this.servicePoints;
     }
 
+    public void reset() {
+        for (ServicePoint sp : servicePoints) {
+            sp.reset();
+        }
+    }
+
 }

@@ -105,7 +105,7 @@ public class SimulatorView extends Application {
             this.controller.setSpeed(slider.getValue());
         });
 
-        //grid.add(getRerunButton(stage),2,8);
+        grid.add(getRerunButton(stage),3,8);
 
 
         return new Scene(grid,600,500);
@@ -152,18 +152,20 @@ public class SimulatorView extends Application {
                 }
             }
             System.out.println(params[0]);
-            this.controller.setParameters(params[0],params[1],params[2],params[3],params[4],params[5]);
+            //this.controller.setParameters(params[0],params[1],params[2],params[3],params[4],params[5]);
+            this.controller.startSimulation(params[0],params[1],params[2],params[3],params[4],params[5]);
             Platform.runLater(() -> stage.setScene(createCounterGrid(stage)));
         });
         return confirmBtn;
     }
 
     private Button getRerunButton(Stage stage){
-        this.controller.terminate();
+
         Button b = new Button("Rerun");
         b.setOnAction(e -> {
 
-           stage.setScene(this.createParameterScene(stage));
+            this.controller.terminate();
+            stage.setScene(this.createParameterScene(stage));
         });
         return b;
     }

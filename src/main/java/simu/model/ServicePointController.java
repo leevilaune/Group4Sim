@@ -65,6 +65,13 @@ public class ServicePointController {
 
  */
     }
+    public int getQuelength(){
+        ArrayList<String> tasks = new ArrayList<>();
+        for (ServicePoint sp : this.servicePoints){
+            tasks.addAll(sp.getCustomerIDs());
+        }
+        return tasks.size();
+    }
 
     public int reservedAmount(){
         return (int) Arrays.stream(this.servicePoints).filter(ServicePoint::isReserved).count();

@@ -32,6 +32,8 @@ public class SimulatorView extends Application {
     private Label internal = new Label("Internal Presentation: 0");
     private Label total = new Label("Total Presentation: 0");
 
+    private HashMap<EventType, TextField> queueLength;
+
     public SimulatorView(){
         this.controller = new SimulatorController(this);
     }
@@ -68,8 +70,12 @@ public class SimulatorView extends Application {
         grid.add(new Label("Queue"), 1, 0);
         grid.add(new Label("Reserved"), 2, 0);
 
+        grid.add(new Label("Queue Length"), 3, 0);
+
+
         this.queueCounters = new HashMap<>();
         this.reservedCounters = new HashMap<>();
+        this.queueLength = new HashMap<>();
         this.timeLabel = new Label("Time:");
         EventType[] labels = {EventType.ARR1, EventType.PLANNING, EventType.IMPLEMENTATION, EventType.TESTING,EventType.REVIEW,EventType.PRESENTATION};
         int i = 1;
@@ -82,9 +88,17 @@ public class SimulatorView extends Application {
             this.queueCounters.putIfAbsent(s, queueField);
             this.reservedCounters.putIfAbsent(s, reservedField);
 
+
+            TextField queLength = new TextField();
+            queLength.setEditable(false);
+            this.queueLength.putIfAbsent(s, queLength);
+
+
             grid.add(label, 0, i);
             grid.add(queueField, 1, i);
             grid.add(reservedField, 2, i);
+
+            grid.add(queLength, 3, i);
             i++;
         }
 
@@ -266,6 +280,11 @@ public class SimulatorView extends Application {
         this.external.setText("External Presentations: " + controller.getExpresentation());
         this.internal.setText("Internal Presentations: " + controller.getInpresentation());
         this.total.setText("Total Presentations: " + (controller.getExpresentation() + controller.getInpresentation()));
+
+        Arrays.stream(servicePointControllers).forEach(servicePointController -> {
+            this.queueLength.get(servicePointController.getType())
+                    .setText(String.valueOf(servicePointController.getQuelength()));
+        });
 
 
     }

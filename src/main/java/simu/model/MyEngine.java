@@ -1,11 +1,8 @@
 package simu.model;
 
-import eduni.distributions.ContinuousGenerator;
-import eduni.distributions.Normal;
-import eduni.distributions.Uniform;
+import eduni.distributions.*;
 import fi.group4.project.controller.SimulatorController;
 import simu.framework.*;
-import eduni.distributions.Negexp;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -58,13 +55,14 @@ public class MyEngine extends Engine{
 									  int testers,
 									  int reviewers,
 									  int presenters,
-									  long seed)
+									  long seed,
+									  String distribution)
 	{
 		long realSeed = (seed == 0L) ? 1L : seed;
 		System.out.println("Using seed: " + realSeed);
 		this.seed = realSeed;
 		System.out.println(servicePoints[0]);
-		this.generator = new Uniform(0,1,realSeed);
+		this.generator = getGenerator(distribution,realSeed,0,1);
 
 		this.servicePoints[0] = new ServicePointController(planners,new Normal(10, 6,realSeed), eventList, EventType.PLANNING);
 		this.servicePoints[1] = new ServicePointController(implementators,new Normal(10, 10,realSeed), eventList, EventType.IMPLEMENTATION);
@@ -78,6 +76,14 @@ public class MyEngine extends Engine{
 		this.setDelay(500);
 		//this.start();
 		//System.exit(0);
+	}
+
+	private ContinuousGenerator getGenerator(String distribution, long seed, double mean, double variance){
+        return switch (distribution) {
+            case "LogNormal" -> new LogNormal(mean, variance, seed);
+            case "Normal" -> new Normal(mean, variance, seed);
+            default -> new Uniform(mean, variance, seed);
+        };
 	}
 
 	@Override

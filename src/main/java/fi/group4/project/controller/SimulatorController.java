@@ -6,11 +6,13 @@ import javafx.application.Platform;
 import simu.framework.Clock;
 import simu.framework.Engine;
 import simu.framework.Trace;
+import simu.model.Customer;
 import simu.model.MyEngine;
 import simu.model.ServicePoint;
 import simu.model.ServicePointController;
 
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.List;
 
 public class SimulatorController implements IControllerVtoM, IControllerMtoV{
@@ -54,7 +56,7 @@ public class SimulatorController implements IControllerVtoM, IControllerMtoV{
             spc.reset();
         }
         Clock.getInstance().setClock(0);
-
+        Customer.reset();
         this.engine.setSimulationTime(1000);
         this.engine.setDelay(1000);
 

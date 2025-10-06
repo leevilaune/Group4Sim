@@ -11,6 +11,7 @@ import simu.model.MyEngine;
 import simu.model.ServicePoint;
 import simu.model.ServicePointController;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Currency;
 import java.util.List;
@@ -36,8 +37,13 @@ public class SimulatorController implements IControllerVtoM, IControllerMtoV{
     public void visualiseCustomer() {
     }
 
+    public List<String> getHistory(){
+        List<String> history = new ArrayList<>(List.of("Simulation A", "Simulation B", "Simulation C"));
+        return history;
+    }
+
     @Override
-    public void startSimulation(int param1, int param2, int param3, int param4, int param5, long seed) {
+    public void startSimulation(int param1, int param2, int param3, int param4, int param5, long seed,String distribution) {
         /*
         if (simulationThread != null && simulationThread.isAlive()) {
             engine.stop();
@@ -50,7 +56,7 @@ public class SimulatorController implements IControllerVtoM, IControllerMtoV{
         }
         */
         this.engine = new MyEngine(this);
-        this.engine.generateServicePoints(param1,param2,param3,param4,param5,seed);
+        this.engine.generateServicePoints(param1,param2,param3,param4,param5,seed,distribution);
 
         for (ServicePointController spc : engine.getServicePoints()) {
             spc.reset();
@@ -95,7 +101,7 @@ public class SimulatorController implements IControllerVtoM, IControllerMtoV{
     }
 
     public void setParameters(int param1, int param2, int param3, int param4, int param5, long seed){
-        this.engine.generateServicePoints(param1,param2,param3,param4,param5,seed);
+        //this.engine.generateServicePoints(param1,param2,param3,param4,param5,seed);
     }
     public ServicePointController[] getServicePointControllers(){
         return this.engine.getServicePoints();

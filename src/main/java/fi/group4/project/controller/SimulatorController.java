@@ -6,17 +6,21 @@ import javafx.application.Platform;
 import simu.framework.Clock;
 import simu.framework.Engine;
 import simu.framework.Trace;
+import simu.model.Customer;
 import simu.model.MyEngine;
 import simu.model.ServicePoint;
 import simu.model.ServicePointController;
 
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.List;
 
 public class SimulatorController implements IControllerVtoM, IControllerMtoV{
 
     private MyEngine engine;
     private SimulatorView view;
+
+    private Thread simulationThread;
 
     public SimulatorController(SimulatorView view){
         this.engine = new MyEngine(this);
@@ -33,12 +37,31 @@ public class SimulatorController implements IControllerVtoM, IControllerMtoV{
     }
 
     @Override
-    public void startSimulation() {
+    public void startSimulation(int param1, int param2, int param3, int param4, int param5, long seed) {
+        /*
+        if (simulationThread != null && simulationThread.isAlive()) {
+            engine.stop();
+            try {
+                simulationThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }
+        */
         this.engine = new MyEngine(this);
+        this.engine.generateServicePoints(param1,param2,param3,param4,param5,seed);
+
+        for (ServicePointController spc : engine.getServicePoints()) {
+            spc.reset();
+        }
+        Clock.getInstance().setClock(0);
+        Customer.reset();
         this.engine.setSimulationTime(1000);
-        Trace.out(Trace.Level.INFO,"SimulatorController.startSimulation(): "+this.engine.getServicePoints()[0]);
-        this.engine.start();
         this.engine.setDelay(1000);
+
+        simulationThread = new Thread(engine);
+        simulationThread.start();
     }
 
     public void setSpeed(double delay){
@@ -60,8 +83,15 @@ public class SimulatorController implements IControllerVtoM, IControllerMtoV{
         Platform.runLater(() -> view.updateCounters(servicePointControllers));
     }
 
-    public void terminate(){
-        Clock.getInstance().setClock(1000);
+    public void terminate() {
+
+        engine.runningNo();
+
+        try {
+            simulationThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setParameters(int param1, int param2, int param3, int param4, int param5, long seed){
@@ -74,4 +104,16 @@ public class SimulatorController implements IControllerVtoM, IControllerMtoV{
     public double getDelay(){
         return this.engine.getDelay();
     }
+
+    public int getArrivals(){
+        return engine.getArrivals();
+    }
+    public int getExpresentation() {
+        return engine.getExpresentation();
+    }
+
+    public int getInpresentation() {
+        return engine.getInpresentation();
+    }
+
 }

@@ -12,6 +12,8 @@ public abstract class Engine extends Thread {
 	protected ServicePoint[] servicePoints;
 	private SimulatorController controller;
 
+    private boolean running = true;
+
 	public Engine(SimulatorController controller) {
 		clock = Clock.getInstance();
 		eventList = new EventList();
@@ -36,14 +38,16 @@ public abstract class Engine extends Thread {
 	@Override
 	public void run() {
 		initialize(); // creating, e.g., the first event
+        running = true;
 
-		while (simulate()){
+		while (simulate() && running){
 			delay();
 			clock.setClock(currentTime());
 			runBEvents();
 			tryCEvents();
 			this.updateCounters();
 		}
+
 		results();
 	}
 
@@ -84,5 +88,14 @@ public abstract class Engine extends Thread {
 
 	protected abstract void initialize(); 	// Defined in simu.model-package's class who is inheriting the Engine class
 	protected abstract void runEvent(Event t);	// Defined in simu.model-package's class who is inheriting the Engine class
-	protected abstract void results(); 			// Defined in simu.model-package's class who is inheriting the Engine class
+	protected abstract void results();
+
+    public void runningYes(){
+        running = true;
+    }
+    public void runningNo(){
+        running = false;
+    }
+
+    // Defined in simu.model-package's class who is inheriting the Engine class
 }

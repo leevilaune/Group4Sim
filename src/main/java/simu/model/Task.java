@@ -111,4 +111,9 @@ public class Customer implements Comparable<Customer> {
 	public int compareTo(Customer o) {
 		return this.priority-o.getPriority();
 	}
+
+	public static void reset(){
+		sum = 0;
+		i = 1;
+	}
 }

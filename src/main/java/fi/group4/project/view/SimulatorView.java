@@ -27,6 +27,18 @@ public class SimulatorView extends Application {
     private HashMap<EventType, TextField> reservedCounters;
     private Label timeLabel;
 
+    private Label arriva = new Label("Arrivals: 0");
+    private Label external = new Label("External Presentation: 0");
+    private Label internal = new Label("Internal Presentation: 0");
+    private Label total = new Label("Total Presentation: 0");
+
+    private ListView<String> listView;
+
+    private HashMap<EventType, TextField> queueLength;
+
+    private final int SCREEN_WIDTH = 600;
+    private final int SCREEN_HEIGHT = 500;
+
     public SimulatorView(){
         this.controller = new SimulatorController(this);
     }
@@ -63,8 +75,12 @@ public class SimulatorView extends Application {
         grid.add(new Label("Queue"), 1, 0);
         grid.add(new Label("Reserved"), 2, 0);
 
+        grid.add(new Label("Queue Length"), 3, 0);
+
+
         this.queueCounters = new HashMap<>();
         this.reservedCounters = new HashMap<>();
+        this.queueLength = new HashMap<>();
         this.timeLabel = new Label("Time:");
         EventType[] labels = {EventType.ARR1, EventType.PLANNING, EventType.IMPLEMENTATION, EventType.TESTING,EventType.REVIEW,EventType.PRESENTATION};
         int i = 1;
@@ -77,9 +93,17 @@ public class SimulatorView extends Application {
             this.queueCounters.putIfAbsent(s, queueField);
             this.reservedCounters.putIfAbsent(s, reservedField);
 
+
+            TextField queLength = new TextField();
+            queLength.setEditable(false);
+            this.queueLength.putIfAbsent(s, queLength);
+
+
             grid.add(label, 0, i);
             grid.add(queueField, 1, i);
             grid.add(reservedField, 2, i);
+
+            grid.add(queLength, 3, i);
             i++;
         }
 
@@ -105,10 +129,17 @@ public class SimulatorView extends Application {
             this.controller.setSpeed(slider.getValue());
         });
 
-        //grid.add(getRerunButton(stage),2,8);
+        grid.add(getRerunButton(stage),3,8);
 
 
-        return new Scene(grid,600,500);
+
+        grid.add(arriva, 0, 9);
+        grid.add(external, 1, 9);
+        grid.add(internal, 2, 9);
+        grid.add(total, 3, 9);
+
+
+        return new Scene(grid,this.SCREEN_WIDTH,this.SCREEN_HEIGHT);
     }
 
     private Scene createParameterScene(Stage stage) {
@@ -136,14 +167,14 @@ public class SimulatorView extends Application {
         Button confirmBtn = getConfirmBtn(stage, fields);
 
         grid.add(confirmBtn, 0, 7, 2, 1);
-        return new Scene(grid, 400, 300);
+        return new Scene(grid, this.SCREEN_WIDTH,this.SCREEN_HEIGHT);
     }
 
     private Button getConfirmBtn(Stage stage, TextField[] fields) {
         Button confirmBtn = new Button("Confirm");
         confirmBtn.setOnAction(e -> {
             int[] params = new int[6];
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 6; i++) {
                 try {
                     params[i] = Integer.parseInt(fields[i].getText());
                     System.out.println(params[i]);
@@ -151,19 +182,21 @@ public class SimulatorView extends Application {
                     params[i] = 0;
                 }
             }
-            System.out.println(params[0]);
-            this.controller.setParameters(params[0],params[1],params[2],params[3],params[4],params[5]);
+            System.out.println(params[5]);
+            //this.controller.setParameters(params[0],params[1],params[2],params[3],params[4],params[5]);
+            this.controller.startSimulation(params[0],params[1],params[2],params[3],params[4],params[5]);
             Platform.runLater(() -> stage.setScene(createCounterGrid(stage)));
         });
         return confirmBtn;
     }
 
     private Button getRerunButton(Stage stage){
-        this.controller.terminate();
+
         Button b = new Button("Rerun");
         b.setOnAction(e -> {
 
-           stage.setScene(this.createParameterScene(stage));
+            this.controller.terminate();
+            stage.setScene(this.createParameterScene(stage));
         });
         return b;
     }
@@ -177,7 +210,7 @@ public class SimulatorView extends Application {
         grid.add(new Label("Service Point"), 0, 0);
         grid.add(new Label("Response Time"), 1, 0);
         grid.add(new Label("Avg Queue Length"), 2, 0);
-
+        grid.add(new Label("Max Queue Length"), 3, 0);
 
 
 
@@ -186,10 +219,12 @@ public class SimulatorView extends Application {
             Label spLabel = new Label(spc.getType().toString());
             Label respTime = new Label(String.format("%.2f", spc.getResponseTimeInSp()));
             Label queueLen = new Label(String.format("%.2f", spc.getAverageQueLenghtAtSp()));
+            Label maxQue = new Label(String.format("%d", spc.getMaxQue()));
 
             grid.add(spLabel, 0, row);
             grid.add(respTime, 1, row);
             grid.add(queueLen, 2, row);
+            grid.add(maxQue, 3, row);
 
             row++;
 
@@ -231,10 +266,10 @@ public class SimulatorView extends Application {
         });
 
         grid.add(goBack,1,row);
-        //grid.add(getRerunButton(stage),2,this.controller.getServicePointControllers().length+1);
+        grid.add(getRerunButton(stage),2,row);
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setContent(grid);
-        return new Scene(scrollPane, 600, 400);
+        return new Scene(scrollPane,this.SCREEN_WIDTH,this.SCREEN_HEIGHT);
     }
 
     public void updateCounters(ServicePointController[] servicePointControllers){
@@ -247,6 +282,18 @@ public class SimulatorView extends Application {
                     .setText(String.valueOf(servicePointController.reservedAmount()));
         });
         this.timeLabel.setText("Time: " +Clock.getInstance().getClock());
+
+        this.arriva.setText("Arrivals: " + controller.getArrivals());
+        this.external.setText("External Presentations: " + controller.getExpresentation());
+        this.internal.setText("Internal Presentations: " + controller.getInpresentation());
+        this.total.setText("Total Presentations: " + (controller.getExpresentation() + controller.getInpresentation()));
+
+        Arrays.stream(servicePointControllers).forEach(servicePointController -> {
+            this.queueLength.get(servicePointController.getType())
+                    .setText(String.valueOf(servicePointController.getQuelength()));
+        });
+
+
     }
 
     public void terminate(){

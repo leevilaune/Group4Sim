@@ -1,6 +1,7 @@
 package fi.group4.project.view;
 
 import fi.group4.project.controller.SimulatorController;
+import fi.group4.project.entity.SimulationRun;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -16,7 +17,11 @@ import simu.model.EventType;
 import simu.model.ServicePoint;
 import simu.model.ServicePointController;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -34,7 +39,7 @@ public class SimulatorView extends Application {
     private Label internal = new Label("Internal Presentation: 0");
     private Label total = new Label("Total Presentation: 0");
 
-    private ListView<String> listView;
+    private ListView<SimulationRun> listView;
 
     private HashMap<EventType, TextField> queueLength;
 
@@ -165,35 +170,53 @@ public class SimulatorView extends Application {
             grid.add(label, 0, i + 1);
             grid.add(textField, 1, i + 1);
         }
+
         ComboBox<String> distribution = new ComboBox<>();
-        distribution.getItems().addAll(List.of("Normal","LogNormal","Uniform"));
+        distribution.getItems().addAll(List.of("Normal", "LogNormal", "Uniform"));
         distribution.getSelectionModel().select("Normal");
 
         Button confirmBtn = getConfirmBtn(stage, fields, distribution);
-        grid.add(distribution,2,6);
+        grid.add(distribution, 2, 6);
 
+        // --- ListView storing SimulationRun objects ---
         this.listView = new ListView<>();
-        this.listView.getItems().addAll(this.controller.getHistory());
-        grid.add(confirmBtn, 0, 7);
-        grid.add(listView,0,8,3,1);
-        Scene scene = new Scene(grid, SCREEN_WIDTH, SCREEN_HEIGHT);
-        this.listView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            System.out.println("User selected: " + newVal);
-            //replace with actual parameters from db when done
-            if(newVal.equalsIgnoreCase("simulation a")){
-                Arrays.stream(fields).forEach(tf -> tf.setText("1"));
-                distribution.getSelectionModel().select("Normal");
-            }
-            else if(newVal.equalsIgnoreCase("simulation b")){
-                Arrays.stream(fields).forEach(tf -> tf.setText("2"));
-                distribution.getSelectionModel().select("LogNormal");
-            }
-            else if(newVal.equalsIgnoreCase("simulation c")){
-                Arrays.stream(fields).forEach(tf -> tf.setText("3"));
-                distribution.getSelectionModel().select("Uniform");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                .withZone(ZoneId.systemDefault());
+
+        // Add all runs
+        this.listView.getItems().addAll(this.controller.loadRuns());
+
+        // Format how items appear in the list
+        this.listView.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(SimulationRun run, boolean empty) {
+                super.updateItem(run, empty);
+                if (empty || run == null) {
+                    setText(null);
+                } else {
+                    setText(formatter.format(Instant.ofEpochSecond(run.getTs())));
+                }
             }
         });
-        return scene;
+
+        grid.add(confirmBtn, 0, 7);
+        grid.add(listView, 0, 8, 3, 1);
+
+        // Selection listener
+        this.listView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                SimulationRun sr = newVal;
+                fields[0].setText(String.valueOf(sr.getParam1()));
+                fields[1].setText(String.valueOf(sr.getParam2()));
+                fields[2].setText(String.valueOf(sr.getParam3()));
+                fields[3].setText(String.valueOf(sr.getParam4()));
+                fields[4].setText(String.valueOf(sr.getParam5()));
+                fields[5].setText(String.valueOf(sr.getSeed()));
+                distribution.getSelectionModel().select(sr.getDistribution());
+            }
+        });
+
+        return new Scene(grid, SCREEN_WIDTH, SCREEN_HEIGHT);
     }
 
     private Button getConfirmBtn(Stage stage, TextField[] fields, ComboBox<String> dist) {
@@ -209,6 +232,12 @@ public class SimulatorView extends Application {
                 }
             }
             System.out.println(params[5]);
+            SimulationRun savedRun = controller.saveRun(params[0], params[1], params[2], params[3], params[4], params[5],Instant.now().getEpochSecond(), dist.getValue());
+
+            // Optionally, add the saved run to the ListView
+            if (savedRun != null) {
+                listView.getItems().add(savedRun);
+            }
             //this.controller.setParameters(params[0],params[1],params[2],params[3],params[4],params[5]);
             this.controller.startSimulation(params[0],params[1],params[2],params[3],params[4],params[5],dist.getValue());
             Platform.runLater(() -> stage.setScene(createCounterGrid(stage)));

@@ -1,5 +1,7 @@
 package fi.group4.project.controller;
 
+import fi.group4.project.dao.SimulationRunDao;
+import fi.group4.project.entity.SimulationRun;
 import fi.group4.project.view.BallThread;
 import fi.group4.project.view.SimulatorView;
 import javafx.application.Platform;
@@ -22,6 +24,8 @@ public class SimulatorController implements IControllerVtoM, IControllerMtoV{
     private SimulatorView view;
 
     private Thread simulationThread;
+
+    private SimulationRunDao dao;
 
     public SimulatorController(SimulatorView view){
         this.engine = new MyEngine(this);
@@ -121,5 +125,11 @@ public class SimulatorController implements IControllerVtoM, IControllerMtoV{
     public int getInpresentation() {
         return engine.getInpresentation();
     }
-
+    public SimulationRun saveRun(int param1,int param2, int param3,int param4,int param5, long seed, long ts, String distribution){
+        this.engine.saveRun(param1,param2,param3,param4,param5,seed,ts,distribution);
+        return new SimulationRun(param1,param2,param3,param4,param5,seed,ts,distribution);
+    }
+    public List<SimulationRun> loadRuns(){
+        return this.engine.loadRuns();
+    }
 }

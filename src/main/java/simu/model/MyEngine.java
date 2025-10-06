@@ -2,9 +2,13 @@ package simu.model;
 
 import eduni.distributions.*;
 import fi.group4.project.controller.SimulatorController;
+import fi.group4.project.dao.SimulationRunDao;
+import fi.group4.project.entity.SimulationRun;
 import simu.framework.*;
 
+import java.time.Instant;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -27,6 +31,8 @@ public class MyEngine extends Engine{
     private int expresentation = 0;
     private int inpresentation = 0;
 
+
+	private SimulationRunDao dao;
 	/**
 	 * Service Points and random number generator with different distributions are created here.
 	 * We use exponent distribution for customer arrival times and normal distribution for the
@@ -35,6 +41,8 @@ public class MyEngine extends Engine{
 	public MyEngine(SimulatorController controller) {
 		super(controller);
 		servicePoints = new ServicePointController[5];
+		this.dao = new SimulationRunDao();
+
 		this.controller = controller;
 			/* more realistic simulation case with variable customer arrival times and service times */
 			/*
@@ -212,4 +220,11 @@ public class MyEngine extends Engine{
     public int getInpresentation() {
         return inpresentation;
     }
+
+	public void saveRun(int param1,int param2, int param3,int param4,int param5, long seed, long ts, String distribution){
+		this.dao.persist(new SimulationRun(param1,param2,param3,param4,param5,seed,ts,distribution));
+	}
+	public List<SimulationRun> loadRuns(){
+		return this.dao	.findAll();
+	}
 }

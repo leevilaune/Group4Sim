@@ -261,7 +261,7 @@ public class SimulatorView extends Application {
         });
 
         grid.add(goBack,1,row);
-        //grid.add(getRerunButton(stage),2,this.controller.getServicePointControllers().length+1);
+        grid.add(getRerunButton(stage),2,row);
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setContent(grid);
         return new Scene(scrollPane, 600, 400);

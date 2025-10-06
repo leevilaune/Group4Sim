@@ -169,7 +169,7 @@ public class SimulatorView extends Application {
         Button confirmBtn = new Button("Confirm");
         confirmBtn.setOnAction(e -> {
             int[] params = new int[6];
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 6; i++) {
                 try {
                     params[i] = Integer.parseInt(fields[i].getText());
                     System.out.println(params[i]);
@@ -177,7 +177,7 @@ public class SimulatorView extends Application {
                     params[i] = 0;
                 }
             }
-            System.out.println(params[0]);
+            System.out.println(params[5]);
             //this.controller.setParameters(params[0],params[1],params[2],params[3],params[4],params[5]);
             this.controller.startSimulation(params[0],params[1],params[2],params[3],params[4],params[5]);
             Platform.runLater(() -> stage.setScene(createCounterGrid(stage)));

@@ -131,4 +131,8 @@ public class ServicePointController {
         }
     }
 
+    public int getMaxQue(){
+        return servicePoints[0].getMaxQue();
+    }
+
 }

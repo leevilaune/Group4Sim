@@ -20,6 +20,8 @@ import java.util.PriorityQueue;
  *
  * Service point collects measurement parameters.
  */
+
+//THE PRIORITIES OF CUSTOMERS SKEW STATISTICS AS SOME CUSTOMERS NEVER GET THROUGH AND IT LEAD TO LOWER RESPONSE TIMES THAN IN REALITY. NEEDS FIXING: AFTER THE TIME IS UP THE SIMULATION SHOULD RUN UNTIL THE QUES ARE EMPTY WITH NO OTHER ARRIVALS COMING IN
 public class ServicePoint implements Comparable<ServicePoint>{
 	private PriorityQueue<Customer> queue = new PriorityQueue<>(); // Data Structure used
 	private ContinuousGenerator generator;
@@ -33,6 +35,8 @@ public class ServicePoint implements Comparable<ServicePoint>{
 
     //wating time includes service time
     private double totalWaitingTimeInSp = 0;
+
+    private int maxQue = 0;
 	/**
 	 * Create the service point with a waiting queue.
 	 *
@@ -54,6 +58,10 @@ public class ServicePoint implements Comparable<ServicePoint>{
 	public void addQueue(Customer a) {	// The first customer of the queue is always in service
         queue.add(a);
         a.setResponseTimeVariable();
+
+        if(queue.size() > maxQue){
+            maxQue = queue.size();
+        }
 	}
 
 	/**
@@ -176,6 +184,10 @@ public class ServicePoint implements Comparable<ServicePoint>{
         return totalWaitingTimeInSp;
     }
 
+    public int getMaxQue(){
+        return maxQue;
+    }
+
 	public List<String> getCustomerIDs(){
 		return queue.stream()
 				.map(Customer::toString)
@@ -192,12 +204,15 @@ public class ServicePoint implements Comparable<ServicePoint>{
 				'}';
 	}
 
+
+
     public void reset() {
         queue.clear();
         reserved = false;
         totalUsageTime = 0;
         totalTaskServiced = 0;
         totalWaitingTimeInSp = 0;
+        maxQue = 0;
     }
 
 

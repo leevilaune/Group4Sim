@@ -205,7 +205,7 @@ public class SimulatorView extends Application {
         grid.add(new Label("Service Point"), 0, 0);
         grid.add(new Label("Response Time"), 1, 0);
         grid.add(new Label("Avg Queue Length"), 2, 0);
-
+        grid.add(new Label("Max Queue Length"), 3, 0);
 
 
 
@@ -214,10 +214,12 @@ public class SimulatorView extends Application {
             Label spLabel = new Label(spc.getType().toString());
             Label respTime = new Label(String.format("%.2f", spc.getResponseTimeInSp()));
             Label queueLen = new Label(String.format("%.2f", spc.getAverageQueLenghtAtSp()));
+            Label maxQue = new Label(String.format("%d", spc.getMaxQue()));
 
             grid.add(spLabel, 0, row);
             grid.add(respTime, 1, row);
             grid.add(queueLen, 2, row);
+            grid.add(maxQue, 3, row);
 
             row++;
 

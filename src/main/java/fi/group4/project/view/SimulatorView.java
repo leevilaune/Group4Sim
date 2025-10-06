@@ -32,7 +32,12 @@ public class SimulatorView extends Application {
     private Label internal = new Label("Internal Presentation: 0");
     private Label total = new Label("Total Presentation: 0");
 
+    private ListView<String> listView;
+
     private HashMap<EventType, TextField> queueLength;
+
+    private final int SCREEN_WIDTH = 600;
+    private final int SCREEN_HEIGHT = 500;
 
     public SimulatorView(){
         this.controller = new SimulatorController(this);
@@ -134,7 +139,7 @@ public class SimulatorView extends Application {
         grid.add(total, 3, 9);
 
 
-        return new Scene(grid,600,500);
+        return new Scene(grid,this.SCREEN_WIDTH,this.SCREEN_HEIGHT);
     }
 
     private Scene createParameterScene(Stage stage) {
@@ -162,7 +167,7 @@ public class SimulatorView extends Application {
         Button confirmBtn = getConfirmBtn(stage, fields);
 
         grid.add(confirmBtn, 0, 7, 2, 1);
-        return new Scene(grid, 400, 300);
+        return new Scene(grid, this.SCREEN_WIDTH,this.SCREEN_HEIGHT);
     }
 
     private Button getConfirmBtn(Stage stage, TextField[] fields) {
@@ -264,7 +269,7 @@ public class SimulatorView extends Application {
         grid.add(getRerunButton(stage),2,row);
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setContent(grid);
-        return new Scene(scrollPane, 600, 400);
+        return new Scene(scrollPane,this.SCREEN_WIDTH,this.SCREEN_HEIGHT);
     }
 
     public void updateCounters(ServicePointController[] servicePointControllers){

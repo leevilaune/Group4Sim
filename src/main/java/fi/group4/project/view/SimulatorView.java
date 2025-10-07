@@ -178,15 +178,12 @@ public class SimulatorView extends Application {
         Button confirmBtn = getConfirmBtn(stage, fields, distribution);
         grid.add(distribution, 2, 6);
 
-        // --- ListView storing SimulationRun objects ---
         this.listView = new ListView<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
                 .withZone(ZoneId.systemDefault());
 
-        // Add all runs
         this.listView.getItems().addAll(this.controller.loadRuns());
 
-        // Format how items appear in the list
         this.listView.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(SimulationRun run, boolean empty) {
@@ -202,7 +199,6 @@ public class SimulatorView extends Application {
         grid.add(confirmBtn, 0, 7);
         grid.add(listView, 0, 8, 3, 1);
 
-        // Selection listener
         this.listView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 SimulationRun sr = newVal;
@@ -234,7 +230,6 @@ public class SimulatorView extends Application {
             System.out.println(params[5]);
             SimulationRun savedRun = controller.saveRun(params[0], params[1], params[2], params[3], params[4], params[5],Instant.now().getEpochSecond(), dist.getValue());
 
-            // Optionally, add the saved run to the ListView
             if (savedRun != null) {
                 listView.getItems().add(savedRun);
             }

@@ -27,7 +27,7 @@ out/
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
-
+!**/src/main/resources/META-INF/persistence.xml
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/

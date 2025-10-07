@@ -3,7 +3,6 @@ package fi.group4.project.view;
 import fi.group4.project.controller.SimulatorController;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -15,6 +14,8 @@ import simu.framework.Clock;
 import simu.model.EventType;
 import simu.model.ServicePoint;
 import simu.model.ServicePointController;
+import fi.group4.project.entity.Simulation;
+import fi.group4.project.dao.SimulationDao;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,7 +35,8 @@ public class SimulatorView extends Application {
     private Label internal = new Label("Internal Presentation: 0");
     private Label total = new Label("Total Presentation: 0");
 
-    private ListView<String> listView;
+//    private ListView<String> listView;
+    private ListView<Simulation> listView;
 
     private HashMap<EventType, TextField> queueLength;
 
@@ -173,24 +175,25 @@ public class SimulatorView extends Application {
         grid.add(distribution,2,6);
 
         this.listView = new ListView<>();
-        this.listView.getItems().addAll(this.controller.getHistory());
+        //this.listView.getItems().addAll(this.controller.getHistory());
+
+        List<Simulation> simulationhistorylist = SimulationDao.getAllSimulations();
+        this.listView.getItems().addAll(simulationhistorylist);
+
         grid.add(confirmBtn, 0, 7);
         grid.add(listView,0,8,3,1);
         Scene scene = new Scene(grid, SCREEN_WIDTH, SCREEN_HEIGHT);
         this.listView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             System.out.println("User selected: " + newVal);
-            //replace with actual parameters from db when done
-            if(newVal.equalsIgnoreCase("simulation a")){
-                Arrays.stream(fields).forEach(tf -> tf.setText("1"));
-                distribution.getSelectionModel().select("Normal");
-            }
-            else if(newVal.equalsIgnoreCase("simulation b")){
-                Arrays.stream(fields).forEach(tf -> tf.setText("2"));
-                distribution.getSelectionModel().select("LogNormal");
-            }
-            else if(newVal.equalsIgnoreCase("simulation c")){
-                Arrays.stream(fields).forEach(tf -> tf.setText("3"));
-                distribution.getSelectionModel().select("Uniform");
+            if (newVal != null) {
+                Simulation sr = newVal;
+                fields[0].setText(String.valueOf(sr.getParameter1()));
+                fields[1].setText(String.valueOf(sr.getParameter2()));
+                fields[2].setText(String.valueOf(sr.getParameter3()));
+                fields[3].setText(String.valueOf(sr.getParameter4()));
+                fields[4].setText(String.valueOf(sr.getParameter5()));
+                fields[5].setText(String.valueOf(sr.getSeed()));
+                distribution.getSelectionModel().select(sr.getDistribution());
             }
         });
         return scene;
@@ -210,6 +213,14 @@ public class SimulatorView extends Application {
             }
             System.out.println(params[5]);
             //this.controller.setParameters(params[0],params[1],params[2],params[3],params[4],params[5]);
+
+
+            Simulation sim = new Simulation(params[0],params[1],params[2],params[3],params[4],params[5],dist.getValue());
+            if(!SimulationDao.isSimulationFound(sim)){
+                SimulationDao.persist(sim);
+            }
+
+
             this.controller.startSimulation(params[0],params[1],params[2],params[3],params[4],params[5],dist.getValue());
             Platform.runLater(() -> stage.setScene(createCounterGrid(stage)));
         });

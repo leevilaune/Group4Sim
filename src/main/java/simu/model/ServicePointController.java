@@ -19,7 +19,7 @@ public class ServicePointController {
         }
     }
 
-    public void addQueue(Customer customer) {
+    public void addQueue(Task customer) {
         for (ServicePoint sp : servicePoints) {
             if (!sp.isReserved()) {
                 sp.addQueue(customer);
@@ -29,7 +29,7 @@ public class ServicePointController {
         servicePoints[0].addQueue(customer);
     }
 
-    public Customer removeQueue() {
+    public Task removeQueue() {
         for (ServicePoint sp : servicePoints) {
             if (sp.isOnQueue()) {
                 return sp.removeQueue();

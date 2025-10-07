@@ -23,7 +23,7 @@ import java.util.PriorityQueue;
 
 //THE PRIORITIES OF CUSTOMERS SKEW STATISTICS AS SOME CUSTOMERS NEVER GET THROUGH AND IT LEAD TO LOWER RESPONSE TIMES THAN IN REALITY. NEEDS FIXING: AFTER THE TIME IS UP THE SIMULATION SHOULD RUN UNTIL THE QUES ARE EMPTY WITH NO OTHER ARRIVALS COMING IN
 public class ServicePoint implements Comparable<ServicePoint>{
-	private PriorityQueue<Customer> queue = new PriorityQueue<>(); // Data Structure used
+	private PriorityQueue<Task> queue = new PriorityQueue<>(); // Data Structure used
 	private ContinuousGenerator generator;
 	private EventList eventList;
 	private EventType eventTypeScheduled;
@@ -55,7 +55,7 @@ public class ServicePoint implements Comparable<ServicePoint>{
 	 *
 	 * @param a Customer to be queued
 	 */
-	public void addQueue(Customer a) {	// The first customer of the queue is always in service
+	public void addQueue(Task a) {	// The first customer of the queue is always in service
         queue.add(a);
         a.setResponseTimeVariable();
 
@@ -70,9 +70,9 @@ public class ServicePoint implements Comparable<ServicePoint>{
 	 *
 	 * @return Customer retrieved from the waiting queue
 	 */
-	public Customer removeQueue() {		// Remove serviced customer
+	public Task removeQueue() {		// Remove serviced customer
 		reserved = false;
-        Customer ab = queue.poll();
+        Task ab = queue.poll();
         totalWaitingTimeInSp += Clock.getInstance().getClock() - ab.getResponseTimeVariable();
 		return ab;
 	}
@@ -135,11 +135,11 @@ public class ServicePoint implements Comparable<ServicePoint>{
         return Double.compare(o.queue.peek().getArrivalTime(), this.queue.peek().getArrivalTime());
 	}
 
-	public PriorityQueue<Customer> getQueue() {
+	public PriorityQueue<Task> getQueue() {
 		return queue;
 	}
 
-	public void setQueue(PriorityQueue<Customer> queue) {
+	public void setQueue(PriorityQueue<Task> queue) {
 		this.queue = queue;
 	}
 
@@ -190,7 +190,7 @@ public class ServicePoint implements Comparable<ServicePoint>{
 
 	public List<String> getCustomerIDs(){
 		return queue.stream()
-				.map(Customer::toString)
+				.map(Task::toString)
 				.toList();
 	}
 

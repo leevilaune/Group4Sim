@@ -6,7 +6,7 @@ import javafx.application.Platform;
 import simu.framework.Clock;
 import simu.framework.Engine;
 import simu.framework.Trace;
-import simu.model.Customer;
+import simu.model.Task;
 import simu.model.MyEngine;
 import simu.model.ServicePoint;
 import simu.model.ServicePointController;
@@ -62,7 +62,7 @@ public class SimulatorController implements IControllerVtoM, IControllerMtoV{
             spc.reset();
         }
         Clock.getInstance().setClock(0);
-        Customer.reset();
+        Task.reset();
         this.engine.setSimulationTime(1000);
         this.engine.setDelay(1000);
 

@@ -93,12 +93,12 @@ public class MyEngine extends Engine{
 
 	@Override
 	protected void runEvent(Event t) {  // B phase events
-		Customer a;
+        Task a;
 		double r = this.generator.sample();
 		Trace.out(Trace.Level.INFO,String.valueOf(r),"samples2.txt");
 		switch ((EventType)t.getType()) {
 		case ARR1:
-            a = new Customer((int) (1+r));
+            a = new Task((int) (1+r));
 			servicePoints[0].addQueue(a);
             arrivals++;
 

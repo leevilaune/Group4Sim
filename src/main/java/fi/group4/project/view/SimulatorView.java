@@ -25,6 +25,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+
+/**
+ * The main JavaFX view class for the simulation project.
+ * Handles UI creation, scene transitions, and user interaction.
+ * Communicates with {@link fi.group4.project.controller.SimulatorController} to start and manage simulations.
+ */
 public class SimulatorView extends Application {
 
     private SimulatorController controller;
@@ -46,10 +52,20 @@ public class SimulatorView extends Application {
     private final int SCREEN_WIDTH = 600;
     private final int SCREEN_HEIGHT = 500;
 
+    /**
+     * Initializes a new {@code SimulatorView} instance and its controller.
+     */
     public SimulatorView(){
         this.controller = new SimulatorController(this);
     }
+
     @Override
+    /**
+     * Entry point for the JavaFX application.
+     * Sets up and displays the initial parameter selection scene.
+     *
+     * @param stage the primary stage for this application
+     */
     public void start(Stage stage) {
         Pane pane = new FlowPane();
         /*
@@ -72,6 +88,12 @@ public class SimulatorView extends Application {
         });
     }
 
+    /**
+     * Creates the scene displaying counters, queue information, and control options.
+     *
+     * @param stage the stage used for scene switching
+     * @return a {@link Scene} displaying live simulation metrics
+     */
     private Scene createCounterGrid(Stage stage) {
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -149,6 +171,13 @@ public class SimulatorView extends Application {
         return new Scene(grid,this.SCREEN_WIDTH,this.SCREEN_HEIGHT);
     }
 
+    /**
+     * Builds the parameter input scene allowing users to configure simulation parameters
+     * and select a previous run to rerun.
+     *
+     * @param stage the JavaFX stage
+     * @return the parameter configuration {@link Scene}
+     */
     private Scene createParameterScene(Stage stage) {
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -215,6 +244,15 @@ public class SimulatorView extends Application {
         return new Scene(grid, SCREEN_WIDTH, SCREEN_HEIGHT);
     }
 
+    /**
+     * Creates the confirm button that saves parameters, starts the simulation, and transitions
+     * to the counter grid scene.
+     *
+     * @param stage the JavaFX stage
+     * @param fields the text fields containing parameter inputs
+     * @param dist the distribution selection combo box
+     * @return the configured {@link Button}
+     */
     private Button getConfirmBtn(Stage stage, TextField[] fields, ComboBox<String> dist) {
         Button confirmBtn = new Button("Confirm");
         confirmBtn.setOnAction(e -> {
@@ -240,6 +278,12 @@ public class SimulatorView extends Application {
         return confirmBtn;
     }
 
+    /**
+     * Creates a button that stops the current simulation and returns to the parameter setup view.
+     *
+     * @param stage the JavaFX stage
+     * @return the rerun {@link Button}
+     */
     private Button getRerunButton(Stage stage){
 
         Button b = new Button("Rerun");
@@ -251,6 +295,12 @@ public class SimulatorView extends Application {
         return b;
     }
 
+    /**
+     * Builds the scene displaying simulation statistics including service point performance metrics.
+     *
+     * @param stage the JavaFX stage
+     * @return a {@link Scene} showing detailed statistics
+     */
     public Scene createStatisticsScene(Stage stage) {
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(20));
@@ -322,6 +372,11 @@ public class SimulatorView extends Application {
         return new Scene(scrollPane,this.SCREEN_WIDTH,this.SCREEN_HEIGHT);
     }
 
+    /**
+     * Updates all counter fields in the UI with the latest simulation data.
+     *
+     * @param servicePointControllers the array of controllers representing service points in the simulation
+     */
     public void updateCounters(ServicePointController[] servicePointControllers){
         Arrays.stream(servicePointControllers).forEach(servicePointController -> {
             this.queueCounters.get(servicePointController.getType())
@@ -346,6 +401,9 @@ public class SimulatorView extends Application {
 
     }
 
+    /**
+     * Stops the animation and terminates any running visual elements.
+     */
     public void terminate(){
         this.d.getBalls().forEach(b -> b.setRunning(false));
     }

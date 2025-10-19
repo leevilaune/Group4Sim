@@ -20,10 +20,7 @@ import simu.model.ServicePointController;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class SimulatorView extends Application {
 
@@ -39,6 +36,7 @@ public class SimulatorView extends Application {
     private Label internal = new Label("Internal Presentation: 0");
     private Label total = new Label("Total Presentation: 0");
 
+    private boolean dbConnected;
     private ListView<SimulationRun> listView;
 
     private HashMap<EventType, TextField> queueLength;
@@ -48,6 +46,7 @@ public class SimulatorView extends Application {
 
     public SimulatorView(){
         this.controller = new SimulatorController(this);
+        this.dbConnected = false;
     }
     @Override
     public void start(Stage stage) {
@@ -182,14 +181,22 @@ public class SimulatorView extends Application {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
                 .withZone(ZoneId.systemDefault());
 
-        this.listView.getItems().addAll(this.controller.loadRuns());
+        List<SimulationRun> runs = this.controller.loadRuns();
 
+        if(runs == null || runs.isEmpty()){
+            runs = new ArrayList<>();
+        }else{
+            this.dbConnected = true;
+        }
+
+        this.listView.getItems().addAll(runs);
+        this.listView.setPlaceholder(new Label("Database can't be connected"));
         this.listView.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(SimulationRun run, boolean empty) {
                 super.updateItem(run, empty);
                 if (empty || run == null) {
-                    setText(null);
+                    setText("Database cant be connected");
                 } else {
                     setText(formatter.format(Instant.ofEpochSecond(run.getTs())));
                 }

@@ -21,6 +21,9 @@ public class SimulationRunDao {
      */
     public void persist(SimulationRun curr) {
         EntityManager em = MariaDbJpaConnection.getInstance();
+        if(em == null){
+            return;
+        }
         em.getTransaction().begin();
         em.persist(curr);
         em.getTransaction().commit();

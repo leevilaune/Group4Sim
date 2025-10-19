@@ -7,23 +7,28 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 /**
- * Service Point implements the functionalities, calculations and reporting.
+ * Represents a service point in the simulation, managing a queue of customers and
+ * simulating service times using a random generator.
  *
- * TODO: This must be modified to actual implementation. Things to be added:
- *     - functionalities of the service point
- *     - measurement variables added
- *     - getters to obtain measurement values
+ * <p>This class tracks metrics such as total usage time, tasks serviced, average
+ * service time, throughput, and queue statistics. Each service point can schedule
+ * service completion events and handle customers in its queue.</p>
  *
- * Service point has a queue where customers are waiting to be serviced.
- * Service point simulated the servicing time using the given random number generator which
- * generated the given event (customer serviced) for that time.
+ * <p>Features include:</p>
+ * <ul>
+ *   <li>Queue management for incoming customers</li>
+ *   <li>Service time generation using a specified {@link ContinuousGenerator}</li>
+ *   <li>Event scheduling via {@link EventList}</li>
+ *   <li>Tracking of performance metrics like utilization, throughput, and waiting times</li>
+ *   <li>Methods to reset state, retrieve statistics, and visualize the queue</li>
+ * </ul>
  *
- * Service point collects measurement parameters.
+ * <p>This class implements {@link Comparable} to allow prioritization based on the
+ * next customer's arrival time in the queue.</p>
  */
 
-//THE PRIORITIES OF CUSTOMERS SKEW STATISTICS AS SOME CUSTOMERS NEVER GET THROUGH AND IT LEAD TO LOWER RESPONSE TIMES THAN IN REALITY. NEEDS FIXING: AFTER THE TIME IS UP THE SIMULATION SHOULD RUN UNTIL THE QUES ARE EMPTY WITH NO OTHER ARRIVALS COMING IN
 public class ServicePoint implements Comparable<ServicePoint>{
-	private PriorityQueue<Customer> queue = new PriorityQueue<>(); // Data Structure used
+	private PriorityQueue<Customer> queue = new PriorityQueue<>();
 	private ContinuousGenerator generator;
 	private EventList eventList;
 	private EventType eventTypeScheduled;
@@ -100,14 +105,33 @@ public class ServicePoint implements Comparable<ServicePoint>{
 		eventList.add(new Event(eventTypeScheduled, Clock.getInstance().getClock()+serviceTime));
 	}
 
+    /**
+     * Returns the utilization of this service point.
+     * Utilization is calculated as total usage time divided by the current simulation time.
+     *
+     * @return the utilization of the service point
+     */
     public double getServicePointUtilization(){
         //simulation time needs to be added as parameter (1000 is the default total simulation time)
         return totalUsageTime/Clock.getInstance().getClock();
     }
+
+    /**
+     * Returns the throughput of this service point.
+     * Throughput is calculated as the number of serviced tasks divided by the current simulation time.
+     *
+     * @return the throughput of the service point
+     */
     public double getServiceThroughput(){
         //simulation time needs to be added as parameter(1000 is the default total simulation time)
         return totalTaskServiced/Clock.getInstance().getClock();
     }
+
+    /**
+     * Returns the average service time for customers at this service point.
+     *
+     * @return the average service time
+     */
     public double getAverageServiceTime(){
         return totalUsageTime/totalTaskServiced;
     }
@@ -130,82 +154,166 @@ public class ServicePoint implements Comparable<ServicePoint>{
 		return queue.size() != 0;
 	}
 
-	@Override
-	public int compareTo(ServicePoint o) {
+    /**
+     * Compares this service point to another based on the arrival time of the customer
+     * at the head of their respective queues.
+     *
+     * @param o the other ServicePoint to compare with
+     * @return a negative integer, zero, or a positive integer as this service point's
+     *         head customer has a later, equal, or earlier arrival time than the other's
+     */
+    @Override
+    public int compareTo(ServicePoint o) {
         return Double.compare(o.queue.peek().getArrivalTime(), this.queue.peek().getArrivalTime());
-	}
+    }
 
+	/**
+	 * Returns the queue of customers for this service point.
+	 *
+	 * @return the customer queue
+	 */
 	public PriorityQueue<Customer> getQueue() {
 		return queue;
 	}
 
+	/**
+	 * Sets the queue of customers for this service point.
+	 *
+	 * @param queue the customer queue to set
+	 */
 	public void setQueue(PriorityQueue<Customer> queue) {
 		this.queue = queue;
 	}
 
+	/**
+	 * Returns the service time generator used by this service point.
+	 *
+	 * @return the continuous generator
+	 */
 	public ContinuousGenerator getGenerator() {
 		return generator;
 	}
 
+	/**
+	 * Sets the service time generator for this service point.
+	 *
+	 * @param generator the continuous generator to set
+	 */
 	public void setGenerator(ContinuousGenerator generator) {
 		this.generator = generator;
 	}
 
+	/**
+	 * Returns the event list used by this service point.
+	 *
+	 * @return the event list
+	 */
 	public EventList getEventList() {
 		return eventList;
 	}
 
+	/**
+	 * Sets the event list for this service point.
+	 *
+	 * @param eventList the event list to set
+	 */
 	public void setEventList(EventList eventList) {
 		this.eventList = eventList;
 	}
 
+	/**
+	 * Returns the event type scheduled for this service point.
+	 *
+	 * @return the scheduled event type
+	 */
 	public EventType getEventTypeScheduled() {
 		return eventTypeScheduled;
 	}
 
+	/**
+	 * Sets the event type scheduled for this service point.
+	 *
+	 * @param eventTypeScheduled the event type to set
+	 */
 	public void setEventTypeScheduled(EventType eventTypeScheduled) {
 		this.eventTypeScheduled = eventTypeScheduled;
 	}
 
+	/**
+	 * Sets the reserved state of this service point.
+	 *
+	 * @param reserved true if reserved, false otherwise
+	 */
 	public void setReserved(boolean reserved) {
 		this.reserved = reserved;
 	}
 
+    /**
+     * Returns the total usage time accumulated by this service point.
+     *
+     * @return the total usage time
+     */
     public double getTotalUsageTime() {
         return totalUsageTime;
     }
 
+    /**
+     * Returns the total number of tasks serviced by this service point.
+     *
+     * @return the total number of serviced tasks
+     */
     public double getTotalTaskServiced() {
         return totalTaskServiced;
     }
 
-    //wating time includes service time
+    /**
+     * Returns the total waiting time (including service time) accumulated in this service point.
+     *
+     * @return the total waiting time in the service point
+     */
     public double getTotalWaitingTimeInSp(){
         return totalWaitingTimeInSp;
     }
 
+    /**
+     * Returns the maximum queue length observed at this service point.
+     *
+     * @return the maximum queue size
+     */
     public int getMaxQue(){
         return maxQue;
     }
 
+	/**
+	 * Returns a list of customer IDs currently in the queue.
+	 *
+	 * @return list of customer IDs as strings
+	 */
 	public List<String> getCustomerIDs(){
 		return queue.stream()
 				.map(Customer::toString)
 				.toList();
 	}
 
-	@Override
-	public String toString() {
-		return "ServicePoint{" +
-				"queue=" + queue +
-				", eventList=" + eventList +
-				", eventTypeScheduled=" + eventTypeScheduled +
-				", reserved=" + reserved +
-				'}';
-	}
+    /**
+     * Returns a string representation of this service point, including its queue,
+     * event list, scheduled event type, and reservation status.
+     *
+     * @return a string representation of the service point
+     */
+    @Override
+    public String toString() {
+        return "ServicePoint{" +
+                "queue=" + queue +
+                ", eventList=" + eventList +
+                ", eventTypeScheduled=" + eventTypeScheduled +
+                ", reserved=" + reserved +
+                '}';
+    }
 
-
-
+    /**
+     * Resets the state of this service point, clearing the queue and all measurement parameters.
+     */
     public void reset() {
         queue.clear();
         reserved = false;

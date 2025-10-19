@@ -112,6 +112,11 @@ public class Customer implements Comparable<Customer> {
 		return this.priority-o.getPriority();
 	}
 
+    /**
+     * Resets all static counters for customer tracking.
+     * This method should be called before starting a new simulation to clear accumulated data.
+     * It resets the total time sum and the customer ID counter back to 1.
+     */
 	public static void reset(){
 		sum = 0;
 		i = 1;

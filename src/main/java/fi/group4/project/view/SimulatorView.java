@@ -219,13 +219,13 @@ public class SimulatorView extends Application {
         }
 
         this.listView.getItems().addAll(runs);
-        this.listView.setPlaceholder(new Label("Database can't be connected"));
+        this.listView.setPlaceholder(new Label("Database can't be connected or is empty"));
         this.listView.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(SimulationRun run, boolean empty) {
                 super.updateItem(run, empty);
                 if (empty || run == null) {
-                    setText("Database cant be connected");
+                    setText(null);
                 } else {
                     setText(formatter.format(Instant.ofEpochSecond(run.getTs())));
                 }
